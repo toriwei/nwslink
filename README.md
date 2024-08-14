@@ -1,6 +1,6 @@
 # NWSLink
 
-NWSLink explores the club and teammate history of players in the National Women's Soccer League through Neo4j. This project uses [SoccerData](https://github.com/probberechts/soccerdata) tool to collect data from [FBref](https://fbref.com/en/).
+NWSLink explores the club and teammate history of players in the National Women's Soccer League through Neo4j. This project uses [SoccerData](https://github.com/probberechts/soccerdata) to collect data from [FBref](https://fbref.com/en/).
 
 ## About the Dataset
 
@@ -10,7 +10,7 @@ NWSLink explores the club and teammate history of players in the National Women'
 
 ### Content
 
-This dataset contains NWSL club history data for all players that received minutes during all official seasons (2013 to present). Therefore, rostered players that did not receive minutes in a given season are not included. It also does not include data from the 2020 season, as it was played as the NWSL Challenge Cup and NWSL Fall Series due to COVID-19 protocols. According to FBref, "Stats for the Challenge Cup and Fall Series are not counted toward league stats, per league determination."
+This dataset contains NWSL club history data for all players that received minutes during all official seasons (2013 to present). Therefore, players who did not play any minutes in a season will not have that season listed. Players who never played any minutes in any season, are not included in the database at all. The database also does not include data from the 2020 season, as it was played as the NWSL Challenge Cup and NWSL Fall Series due to COVID-19 protocols. According to FBref, "Stats for the Challenge Cup and Fall Series are not counted toward league stats, per league determination."
 
 ## Loading the Dataset
 
