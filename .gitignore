@@ -3,3 +3,5 @@ played_for.csv
 played_with.csv
 players.csv
 teams.csv
+env
+__pycache__

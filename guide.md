@@ -30,7 +30,8 @@ Show all of Christen Press's teammates organized by club.
 
 ```
 MATCH (p:Player {name: 'Christen Press'})-[f:PLAYED_FOR]->(t:Team)<-[a:PLAYED_FOR]-(m:Player)-[:PLAYED_WITH]->(p)
-RETURN p, f, t, m, a ORDER BY t, m
+RETURN p, f, t, m, a
+ORDER BY t, m
 ```
 
 ![find teammates](./example-images/find-teammates.png)
@@ -40,7 +41,9 @@ RETURN p, f, t, m, a ORDER BY t, m
 Provide the number of teammates Kristie Mewis played with per club.
 
 ```
-MATCH (player:Player {name:"Kristie Mewis"})-[w:PLAYED_WITH]->(teammate:Player) RETURN w.team AS team, COUNT(w.team) AS num_teammates ORDER BY w.team
+MATCH (player:Player {name:"Kristie Mewis"})-[w:PLAYED_WITH]->(teammate:Player)
+RETURN w.team AS team, COUNT(w.team) AS num_teammates
+ORDER BY w.team
 ```
 
 ![kristie mewis teammates per club](./example-images/kristie-mewis-teammates.png)
@@ -50,7 +53,9 @@ MATCH (player:Player {name:"Kristie Mewis"})-[w:PLAYED_WITH]->(teammate:Player) 
 Provide the number of teammates Christine Sinclair played with.
 
 ```
-MATCH (player:Player {name:"Christine Sinclair"})-[w:PLAYED_WITH]->(teammate:Player) WITH player, COUNT(DISTINCT teammate) AS num_teammates RETURN num_teammates
+MATCH (player:Player {name:"Christine Sinclair"})-[w:PLAYED_WITH]->(teammate:Player)
+WITH player, COUNT(DISTINCT teammate) AS num_teammates
+RETURN num_teammates
 ```
 
 ![amount teammates](./example-images/amount-teammates.png)
@@ -87,8 +92,7 @@ Returns players that played for Washington Spirit in both the 2023 and 2024 seas
 
 ```
 MATCH (p:Player)-[f:PLAYED_FOR WHERE f.seasons CONTAINS '2023' AND f.seasons CONTAINS '2024']->(t:Team {team:"Spirit"})
-
- RETURN p, f, t
+RETURN p, f, t
 ```
 
 ![players by season and club](./example-images/players-by-season.png)
@@ -99,7 +103,7 @@ MATCH (p:Player)-[f:PLAYED_FOR WHERE f.seasons CONTAINS '2023' AND f.seasons CON
 
 Show where players from the Boston Breakers's 2017 season played in 2018.
 
-Boston Breakers disbanded following the 2017 season, and the NWSL held a dispersal draft prior to the 2018 season.
+- Boston Breakers disbanded following the 2017 season, and the NWSL held a dispersal draft prior to the 2018 season.
 
 ![dispersal](./example-images/dispersal.png)
 
@@ -114,10 +118,11 @@ Show amount of active players by season
 ```
 MATCH (t:Team {team:"Thorns"})<-[f:PLAYED_FOR]-(p:Player)
 WITH REPLACE(REPLACE(REPLACE(f.seasons, "[", ""), "]", ""), "'", "") AS cleaned_seasons
-WITH SPLIT(cleaned_seasons, ",") as seasons
-UNWIND seasons as season
-WITH TRIM(season) as individual_season
-RETURN individual_season as season, COUNT(individual_season) as player_count ORDER BY season DESC
+WITH SPLIT(cleaned_seasons, ",") AS seasons
+UNWIND seasons AS season
+WITH TRIM(season) AS individual_season
+RETURN individual_season AS season, COUNT(individual_season) AS player_count
+ORDER BY season DESC
 ```
 
 ![players per season](./example-images/players-per-season.png)
@@ -129,7 +134,10 @@ RETURN individual_season as season, COUNT(individual_season) as player_count ORD
 Show the top 10 players with the most amount of teammates.
 
 ```
-MATCH (player:Player)-[w:PLAYED_WITH]->(teammate:Player) WITH player, COUNT(DISTINCT teammate) AS num_teammates RETURN player.name, num_teammates ORDER BY num_teammates DESC LIMIT 10
+MATCH (player:Player)-[w:PLAYED_WITH]->(teammate:Player) WITH player, COUNT(DISTINCT teammate) AS num_teammates
+RETURN player.name, num_teammates
+ORDER BY num_teammates DESC
+LIMIT 10
 ```
 
 ![most teammates](./example-images/most-teammates.png)
@@ -139,10 +147,11 @@ MATCH (player:Player)-[w:PLAYED_WITH]->(teammate:Player) WITH player, COUNT(DIST
 ```
 MATCH (t:Team)<-[f:PLAYED_FOR]-(p:Player)
 WITH REPLACE(REPLACE(REPLACE(f.seasons, "[", ""), "]", ""), "'", "") AS cleaned_seasons
-WITH SPLIT(cleaned_seasons, ",") as seasons
-UNWIND seasons as season
-WITH TRIM(season) as individual_season
-RETURN individual_season as season, COUNT(individual_season) as player_count ORDER BY season
+WITH SPLIT(cleaned_seasons, ",") AS seasons
+UNWIND seasons AS season
+WITH TRIM(season) AS individual_season
+RETURN individual_season AS season, COUNT(individual_season) AS player_count
+ORDER BY season
 ```
 
 ![league players by season](./example-images/league-players-per-season.png)
