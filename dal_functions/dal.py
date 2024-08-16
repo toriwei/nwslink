@@ -10,7 +10,7 @@ db_user = os.environ['DB_USER'] if os.environ.get('DB_USER') else 'neo4j'
 # The Neo4j documentation calls this object `driver` but the name `db` is used here
 # to provide an analogy across various DAL examples.
 db = GraphDatabase.driver(os.environ['DB_URL'], auth=(db_user, os.environ['DB_PASSWORD']))
-print(db.session)
+
 def get_teammates(player):
   with db.session() as session:
     result = session.run(
@@ -22,3 +22,17 @@ def get_teammates(player):
       player=player
     )
     return [record for record in result]
+  
+def get_shortest_path(player_1, player_2):
+  with db.session() as session:
+    result = session.run(
+      """
+      MATCH (a:Player),(b:Player)
+      WHERE a.name=$player_1 AND b.name=$player_2
+      MATCH p = shortestPath((a)-[*]-(b))
+      RETURN p
+      """,
+      player_1=player_1,
+      player_2=player_2
+    )
+    return result.single()
