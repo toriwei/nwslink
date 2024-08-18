@@ -36,3 +36,50 @@ def get_shortest_path(player_1, player_2):
       player_2=player_2
     )
     return result.single()
+
+def get_random_player():
+  with db.session() as session:
+    result = session.run(
+    """
+    MATCH (p:Player)-[f:PLAYED_FOR]->(t:Team)
+    WITH p, COUNT(t) AS num_teams
+    WHERE num_teams > 1
+    WITH p ORDER BY rand() LIMIT 1
+    RETURN p
+    """
+    )
+    return result.single()
+  
+def get_random_season(player= None, team= None):
+  with db.session() as session:
+    result = session.run(
+    """
+    MATCH (p:Player)-[f:PLAYED_FOR]->(t:Team)
+    WHERE (p.name = $player OR $player IS NULL)
+    AND (t.team <> $team OR $team IS NULL)
+    WITH t, f ORDER BY rand() LIMIT 1
+    RETURN *
+    """,
+    player= player,
+    team= team,
+    )
+    return result.single()
+  
+def get_random_teammate(team, season):
+  with db.session() as session:
+    result = session.run(
+      """
+      MATCH (p:Player)-[f:PLAYED_FOR]->(t:Team)
+      WHERE (t.team = $team) 
+        AND (f.seasons CONTAINS $season)
+      WITH p
+      MATCH (p:Player)-[f:PLAYED_FOR]->(t:Team)
+      WITH p, COUNT(t) AS num_teams
+      WHERE num_teams > 1
+      WITH p ORDER BY rand() LIMIT 1
+      RETURN p
+      """,
+      team=team,
+      season=season
+    )
+    return result.single()

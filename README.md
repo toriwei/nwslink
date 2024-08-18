@@ -52,4 +52,14 @@ NEO4J_CONF=<absolute path to conf directory> neo4j console
 
 ## Uses
 
-Visit [guide.md](/guide.md) for queries.
+Visit [guide.md](/guide.md) for example queries.
+
+## Driver
+
+The [driver](./driver/) folder contains the data access layer (dal) to run the Python driver from the command line. Documentation and setup for the driver can be found on the [Neo4j site](https://neo4j.com/docs/api/python-driver/current/).
+
+Programs can be run with the following command (password is the same as the one created for the Neo4j broswer):
+
+```
+DB_URL=neo4j://localhost DB_PASSWORD=<password> python3 <file_name> <args>
+```

@@ -1,5 +1,5 @@
 import sys
-from dal import get_teammates
+from driver import get_teammates
 
 if len(sys.argv) != 2:
   print('Usage get_teammates.py <player>')
