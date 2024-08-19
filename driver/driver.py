@@ -50,7 +50,7 @@ def get_random_player():
     )
     return result.single()
   
-def get_random_season(player= None, team= None):
+def get_random_played_for(player= None, team= None):
   with db.session() as session:
     result = session.run(
     """
