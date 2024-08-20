@@ -86,40 +86,20 @@ class Game:
         self.players[i][j]
     
   def get_grid(self, players):
-    column_width = max(len(player) for row in players for player in row) + 2
-    fourth_column_width = max(len(self.get_underscored_name(row[3])) for row in players) + 2
+    column_width = max(len(player) for row in players for player in row[:3]) + 2
+    fourth_column_width = max(len(row[3]) for row in players) + 2
 
     separator = "+--" + "+--".join(["-" * column_width] * 3 + ["-" * fourth_column_width]) + "+"
 
     self.grid_str += separator
     for row in players:
-        modified_row = row[:3] + [self.get_underscored_name(row[3])]
-        self.grid_str += "\n|" + "|".join(f"  {player:<{column_width}}" for player in modified_row[:3]) + f"|  {modified_row[3]:<{fourth_column_width}}|"
+        self.grid_str += "\n|" + "|".join(f"  {player:<{column_width}}" for player in row[:3]) + f"|  {row[3]:<{fourth_column_width}}|"
         self.grid_str += "\n" + separator
     return self.grid_str
   
   def get_underscored_name(self, player):
     return " ".join("_" if char != " " else "  " for char in player)
 
-
-
-  # def get_players(self):
-  #   print("Players Grid:")
-  #   for row in self.players:
-  #       print(row)
-
-  # def get_connections(self):
-  #   print("\nConnections:")
-  #   for connection in self.connections:
-  #       print(connection)
-
-  # def get_mystery_team(self):
-  #   print("\nMystery Team:")
-  #   print(self.mystery_team)
-
-    # print("\nConnections Set:")
-    # for connection_set in connections_set:
-    #     print(connection_set)
 
 if __name__ == "__main__":
     game = Game()
