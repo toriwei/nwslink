@@ -1,3 +1,5 @@
+import time
+import game_utils
 from setup_game import Game
 from handle_guess import Guess
 PROD = False
@@ -9,66 +11,92 @@ class GameRunner:
     self.game = Game(PROD= self.PROD)
     self.game.setup_game(PROD)
     self.guess_handler = None
-    self.players_progress = self.set_players_progress()
-    self.mystery_players_progress = self.set_mystery_players_progress()
-
+    self.players_progress = self.set_players_progress(self.game.players.copy())
+    self.mystery_players_progress = [row[3] for row in self.players_progress]
+    self.player_guessed_list = [False] * 4
 
   def run_game(self):
-    self.print_setup()
-
-    
-    grid = self.game.get_grid(self.players_progress)
+    if not PROD:
+      game_utils.print_setup(
+        players=self.game.players, 
+        connections=self.game.connections, 
+        mystery_team=self.game.mystery_team, 
+        connections_set=self.game.connections_set
+      )
 
     print("\nWELCOME TO THE GAME")
-    print(grid)
     
     while True:
+      print(self.game.get_grid(self.players_progress))
+
       row_selection = self.get_row_selection()
 
-      if row_selection is None:
+      if row_selection == "":
           print("Ending game.")
           break
     
-      correct_name = self.game.mystery_players[row_selection]
+      if PROD == False:
+        print(f"correct name: {self.game.mystery_players[row_selection]}")
+        print(f"row: {row_selection + 1}")
 
-      print(f"correct name: {correct_name}")
-      print(f"row: {row_selection + 1}")
+      if self.player_guessed_list[row_selection] == True:
+        print("You have already guessed this player!")
+        time.sleep(1)
+      else:
+        self.run_guess_loop(row_selection)         
+        if all(self.player_guessed_list):
+          print("Completed Game!")
+          return
 
-      while True:
-        guess = input("Enter your guess or press enter to return to row selection.\n")
-        guess = guess.upper()
-        print("")
+  def run_guess_loop(self, row_selection):
+    print("Enter your guess or press enter to return to row selection.")
+    while True:
+      guess = input().upper()
+      
+      if guess == "":
+        break
 
-        if guess == "":
-           print("back")
-           break
+      print("")
+      self.process_guess(guess, row_selection)
 
-        if guess is None:
-          print("Ending game.")
-          break
+      if self.is_correct_guess(row_selection):
+        break
 
-        self.process_guess(guess, row_selection)
-
-
+  def is_correct_guess(self, row_selection):
+    if "_" not in self.mystery_players_progress[row_selection]:
+      self.player_guessed_list[row_selection] = True
+      print("Correctly gussed mystery player!")
+      time.sleep(1)
+      return True
+     
   def process_guess(self, guess, row):
     # TO DO: test if valid guess
     self.guess_handler = Guess(
       self.game,
       row,
       guess,
-      self.mystery_players_progress
+      self.mystery_players_progress,
+      self.players_progress
     )
 
-    self.mystery_players_progress = self.guess_handler.handle_guess()
+    guess_result = self.guess_handler.handle_guess()
+
+    self.mystery_players_progress = guess_result['updated_guesses']
+    self.players_progress = guess_result['updated_players']
+    print(guess_result["shared_letters"])
+    print(guess_result["updated_guesses"][row])
+    print("")
+    return self.mystery_players_progress
 
   def get_row_selection(self):  
     while True:
       row = input("Enter a row number (1 to 4) to guess a player.\n")
       if row == "end":
-          return None
+          return ""
       try:
-        if int(row) in range(1, 5):
-            return int(row) - 1
+        row = int(row)
+        if 1 <= row <= 4:
+            return row - 1
         else:
             print("Invalid input. Please enter a number from 1 to 4.\n")
       except ValueError:
@@ -79,33 +107,10 @@ class GameRunner:
       # make queries and guesses non-sensitive to special characters
       return
   
-  def set_players_progress(self):
-    players = self.game.players.copy()
+  def set_players_progress(self, players):
     for i in range(0, 4):
       players[i][3] = self.game.get_underscored_name(self.game.mystery_players[i])
-    return players
-  
-  def set_mystery_players_progress(self):
-    underscore_names = []
-    for i in range(0, 4):
-      underscore_names.append(self.game.get_underscored_name(self.game.mystery_players[i]))
-    return underscore_names
-
-  def print_setup(self):
-    print("Players Grid:")
-    for row in self.game.players:
-        print(row)
-
-    print("\nConnections:")
-    for connection in self.game.connections:
-        print(connection)
-
-    print("\nMystery Team:")
-    print(self.game.mystery_team)
-
-    print("\nConnections Set:")
-    for connection_set in self.game.connections_set:
-        print(connection_set)
+    return players     
 
 
 if __name__ == "__main__":

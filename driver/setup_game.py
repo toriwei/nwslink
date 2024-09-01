@@ -1,4 +1,5 @@
 import random
+import game_utils
 from collections import namedtuple
 from unidecode import unidecode
 from driver import get_random_player, get_random_played_for, get_random_teammate
@@ -90,35 +91,11 @@ class Game:
       self.mystery_players = [player.upper() for player in self.mystery_players]
       
     else:
-      self.players = [
-        ['Clare Polkinghorne', 'Kendall Johnson', 'Michelle Betos', 'Sinead Farrelly'],
-        ['Raquel Rodríguez', 'Emily Menges', 'Simone Charley', 'Yazmeen Ryan'],
-        ['Cari Roccaro', 'Kendall Fletcher', 'Lynn Williams', 'Taylor Smith'],
-        ['Emily van Egmond', 'Toni Pressley', 'Ashlyn Harris', 'Kristen Edmonds']
-      ]
-
-      self.players = [[unidecode(player.upper()) for player in row] for row in self.players]
-
-      self.connections = [
-        {'team': 'Thorns', 'season': '2015'},
-        {'team': 'Thorns', 'season': '2021'},
-        {'team': 'Courage', 'season': '2021'},
-        {'team': 'Pride', 'season': '2019'}
-      ]
-
-      self.mystery_team = self.Connection(team='Gotham', season='2023')
-      self.mystery_players = ['Sinead Farrelly', 'Yazmeen Ryan', 'Taylor Smith', 'Kristen Edmonds']
-
-      self.mystery_players = [unidecode(player.upper()) for player in self.mystery_players]
-
-      self.connections_set = {
-        self.Connection(team='Courage', season='2021'),
-        self.Connection(team='Gotham', season='2023'),
-        self.Connection(team='Thorns', season='2015'),
-        self.Connection(team='Thorns', season='2021'),
-        self.Connection(team='Pride', season='2019')
-      }
-
+      self.players = game_utils.PLAYERS
+      self.connections = game_utils.CONNECTIONS
+      self.mystery_team = game_utils.MYSTERY_TEAM
+      self.mystery_players = game_utils.MYSTERY_PLAYERS
+      self.connections_set = game_utils.CONNECTIONS_SET
     
   def get_grid(self, players):
     column_width = max(len(player) for row in players for player in row[:3]) + 2

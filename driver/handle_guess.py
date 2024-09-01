@@ -1,28 +1,19 @@
 class Guess:
-  def __init__(self, game, row, guess, mystery_players_progress):
+  def __init__(self, game, row, guess, mystery_players_progress, players_progress):
     self.game = game
     self.row = row
     self.guess = guess
+    self.updated_guesses = mystery_players_progress
+    self.players_progress = players_progress
     self.correct_name = self.game.mystery_players[row]
     self.underscore_name = self.game.get_underscored_name(self.correct_name)
-    self.updated_guesses = mystery_players_progress
 
   def handle_guess(self):
-    # print("\nHANDLE GUESS")
-    # print(f"guess: {self.guess}")
-    # print(f"correct_name: {self.correct_name}")
-    # print("==================\n")
+    aligned_guess_dict = self.align_guess(self.guess, self.correct_name)
+    aligned_guess = aligned_guess_dict["aligned_guess"]
+    leftovers = aligned_guess_dict["leftover_letters"]
 
-    if self.guess == self.correct_name:
-      # TO DO: handle_correct_guess
-      return True
-    
-    else:
-      aligned_guess_dict = self.align_guess(self.guess, self.correct_name)
-      aligned_guess = aligned_guess_dict["aligned_guess"]
-      leftovers = aligned_guess_dict["leftover_letters"]
-
-      return self.handle_incorrect_guess(aligned_guess, leftovers,)
+    return self.handle_incorrect_guess(aligned_guess, leftovers,)
     
   def handle_incorrect_guess(self, aligned_guess, leftovers):
     correct_letters = []
@@ -42,11 +33,9 @@ class Guess:
 
     correct_letters = sorted(correct_letters)
 
-    underscore_progress = self.update_underscore_progress(underscore_build)
-    print(f"correct letters, wrong spot")
-    print(correct_letters)
-    print(self.updated_guesses)
-    return {"shared_letters": correct_letters, "updated_guesses": self.updated_guesses}
+    self.update_underscore_progress(underscore_build)
+    self.players_progress[self.row][3] = self.updated_guesses[self.row]
+    return {"shared_letters": correct_letters, "updated_guesses": self.updated_guesses, "updated_players": self.players_progress}
 
   def align_guess(self, guess, correct_name):
     leftover = ""
@@ -96,12 +85,7 @@ class Guess:
     build = ''.join([char + ' ' if char.isalnum() or char == '_' else char for char in build])
     build = build[:-1]
 
-
     self.updated_guesses[self.row] = build
-
-    print("Result:")
-    print(f"{build}")
-    print("")
 
     return build
 
@@ -109,7 +93,7 @@ class Guess:
   def get_mystery_players_progress(self, mystery_players):
     underscore_mystery_players = []
     for player in mystery_players:
-      print(player)
-      print(self.game.get_underscored_name(player))
+      # print(player)
+      # print(self.game.get_underscored_name(player))
       underscore_mystery_players.append(self.game.get_underscored_name(player))
     return underscore_mystery_players
