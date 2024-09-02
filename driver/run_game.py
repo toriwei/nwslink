@@ -73,17 +73,17 @@ class GameRunner:
     # TO DO: test if valid guess
     self.guess_handler = Guess(
       self.game,
-      row,
-      guess,
-      self.mystery_players_progress
+      self.game.mystery_players[row],
+      self.mystery_players_progress[row],
+      guess
     )
 
     guess_result = self.guess_handler.handle_guess()
 
-    self.mystery_players_progress = guess_result['mystery_players_progress']
+    self.mystery_players_progress[row] = guess_result['mystery_players_progress']
     self.players_progress[row][3] = self.mystery_players_progress[row]
     print(guess_result["shared_letters"])
-    print(guess_result["mystery_players_progress"][row])
+    print(guess_result["mystery_players_progress"])
     print("")
     return self.mystery_players_progress
 
