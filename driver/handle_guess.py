@@ -3,7 +3,7 @@ class Guess:
     self.game = game
     self.row = row
     self.guess = guess
-    self.updated_guesses = mystery_players_progress
+    self.mystery_players_progress = mystery_players_progress
     self.players_progress = players_progress
     self.correct_name = self.game.mystery_players[row]
     self.underscore_name = self.game.get_underscored_name(self.correct_name)
@@ -13,30 +13,31 @@ class Guess:
     aligned_guess = aligned_guess_dict["aligned_guess"]
     leftovers = aligned_guess_dict["leftover_letters"]
 
-    return self.handle_incorrect_guess(aligned_guess, leftovers,)
-    
-  def handle_incorrect_guess(self, aligned_guess, leftovers):
-    correct_letters = []
+    shared_letters, underscore_build = self.compare_guess(aligned_guess, leftovers)
+
+    self.mystery_players_progress[self.row] = self.update_underscore_progress(underscore_build)
+    self.players_progress[self.row][3] = self.mystery_players_progress[self.row]
+    return {"shared_letters": shared_letters, "mystery_players_progress": self.mystery_players_progress, "updated_players": self.players_progress}
+
+  def compare_guess(self, aligned_guess, leftovers):
+    shared_letters = []
     underscore_build = []
     for i, char in enumerate(self.correct_name):
       if aligned_guess[i] == char:
         underscore_build.append(char)
       else:
           underscore_build.append("_")
-          if char in aligned_guess and char not in correct_letters:
-              correct_letters.append(char)
-    
-    if len(leftovers) > 0:
-      for char in leftovers:
-        if char in self.correct_name and char not in correct_letters:
-          correct_letters.append(char)
+          if char in aligned_guess and char not in shared_letters:
+              shared_letters.append(char)
+      
+      if len(leftovers) > 0:
+        for char in leftovers:
+          if char in self.correct_name and char not in shared_letters:
+            shared_letters.append(char)
 
-    correct_letters = sorted(correct_letters)
+    return sorted(shared_letters), underscore_build
 
-    self.update_underscore_progress(underscore_build)
-    self.players_progress[self.row][3] = self.updated_guesses[self.row]
-    return {"shared_letters": correct_letters, "updated_guesses": self.updated_guesses, "updated_players": self.players_progress}
-
+  
   def align_guess(self, guess, correct_name):
     leftover = ""
     if len(guess) > len(correct_name):
@@ -59,7 +60,7 @@ class Guess:
     return {"aligned_guess": aligned_guess, "leftover_letters": leftover}
 
   def update_underscore_progress(self, new_underscore):
-    existing_underscore = self.updated_guesses[self.row]
+    existing_underscore = self.mystery_players_progress[self.row]
     result = []
 
     i = 0
@@ -82,18 +83,8 @@ class Guess:
         build += char2
       else:
         build += "_"
-    build = ''.join([char + ' ' if char.isalnum() or char == '_' else char for char in build])
-    build = build[:-1]
 
-    self.updated_guesses[self.row] = build
+    valid_chars = {'_', "'", '-'}
+    build = ''.join([char + ' ' if char.isalpha() or char in valid_chars else char for char in build])[:-1]
 
     return build
-
-  # return array of underscore representation of mystery players
-  def get_mystery_players_progress(self, mystery_players):
-    underscore_mystery_players = []
-    for player in mystery_players:
-      # print(player)
-      # print(self.game.get_underscored_name(player))
-      underscore_mystery_players.append(self.game.get_underscored_name(player))
-    return underscore_mystery_players

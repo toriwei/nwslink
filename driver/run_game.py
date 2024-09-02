@@ -29,26 +29,26 @@ class GameRunner:
     while True:
       print(self.game.get_grid(self.players_progress))
 
-      row_selection = self.get_row_selection()
+      row = self.get_row()
 
-      if row_selection == "":
+      if row == "":
           print("Ending game.")
           break
     
       if PROD == False:
-        print(f"correct name: {self.game.mystery_players[row_selection]}")
-        print(f"row: {row_selection + 1}")
+        print(f"correct name: {self.game.mystery_players[row]}")
+        print(f"row: {row + 1}")
 
-      if self.player_guessed_list[row_selection] == True:
+      if self.player_guessed_list[row] == True:
         print("You have already guessed this player!")
         time.sleep(1)
       else:
-        self.run_guess_loop(row_selection)         
+        self.run_guess_loop(row)         
         if all(self.player_guessed_list):
           print("Completed Game!")
           return
 
-  def run_guess_loop(self, row_selection):
+  def run_guess_loop(self, row):
     print("Enter your guess or press enter to return to row selection.")
     while True:
       guess = input().upper()
@@ -57,14 +57,14 @@ class GameRunner:
         break
 
       print("")
-      self.process_guess(guess, row_selection)
+      self.process_guess(guess, row)
 
-      if self.is_correct_guess(row_selection):
+      if self.is_correct_guess(row):
         break
 
-  def is_correct_guess(self, row_selection):
-    if "_" not in self.mystery_players_progress[row_selection]:
-      self.player_guessed_list[row_selection] = True
+  def is_correct_guess(self, row):
+    if "_" not in self.mystery_players_progress[row]:
+      self.player_guessed_list[row] = True
       print("Correctly gussed mystery player!")
       time.sleep(1)
       return True
@@ -81,14 +81,14 @@ class GameRunner:
 
     guess_result = self.guess_handler.handle_guess()
 
-    self.mystery_players_progress = guess_result['updated_guesses']
+    self.mystery_players_progress = guess_result['mystery_players_progress']
     self.players_progress = guess_result['updated_players']
     print(guess_result["shared_letters"])
-    print(guess_result["updated_guesses"][row])
+    print(guess_result["mystery_players_progress"][row])
     print("")
     return self.mystery_players_progress
 
-  def get_row_selection(self):  
+  def get_row(self):  
     while True:
       row = input("Enter a row number (1 to 4) to guess a player.\n")
       if row == "end":
