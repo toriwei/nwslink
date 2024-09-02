@@ -1,10 +1,9 @@
 class Guess:
-  def __init__(self, game, row, guess, mystery_players_progress, players_progress):
+  def __init__(self, game, row, guess, mystery_players_progress):
     self.game = game
     self.row = row
     self.guess = guess
     self.mystery_players_progress = mystery_players_progress
-    self.players_progress = players_progress
     self.correct_name = self.game.mystery_players[row]
     self.underscore_name = self.game.get_underscored_name(self.correct_name)
 
@@ -16,8 +15,7 @@ class Guess:
     shared_letters, underscore_build = self.compare_guess(aligned_guess, leftovers)
 
     self.mystery_players_progress[self.row] = self.update_underscore_progress(underscore_build)
-    self.players_progress[self.row][3] = self.mystery_players_progress[self.row]
-    return {"shared_letters": shared_letters, "mystery_players_progress": self.mystery_players_progress, "updated_players": self.players_progress}
+    return {"shared_letters": shared_letters, "mystery_players_progress": self.mystery_players_progress}
 
   def compare_guess(self, aligned_guess, leftovers):
     shared_letters = []
