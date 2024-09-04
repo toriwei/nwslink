@@ -21,7 +21,7 @@ CONNECTIONS = [
 
 MYSTERY_TEAM = Connection(team='Gotham', season='2023')
 
-MYSTERY_PLAYERS = ['Sinead Farrelly', 'Yazmeen Ryan', 'Taylor Smith', 'Kristen Edmonds']
+MYSTERY_PLAYERS = [row[3] for row in PLAYERS]
 
 MYSTERY_PLAYERS = [unidecode(player.upper()) for player in MYSTERY_PLAYERS]
 
@@ -33,12 +33,13 @@ CONNECTIONS_SET = {
   Connection(team='Pride', season='2019')
 }
 
-def print_setup(players, connections, mystery_team, connections_set):
+def print_setup(players, connections, mystery_team, connections_set, mystery_players):
   elements = {
       "Players Grid": players,
       "Connections": connections,
       "Mystery Team": [mystery_team],
-      "Connections Set": connections_set
+      "Connections Set": connections_set,
+      "Mystery Players": mystery_players
   }
 
   for title, values in elements.items():
