@@ -2,6 +2,7 @@ import time
 import game_utils
 from setup_game import Game
 from handle_guess import Guess
+from driver import is_valid_player
 PROD = False
 
 class GameRunner:
@@ -21,7 +22,8 @@ class GameRunner:
         players=self.game.players, 
         connections=self.game.connections, 
         mystery_team=self.game.mystery_team, 
-        connections_set=self.game.connections_set
+        connections_set=self.game.connections_set,
+        mystery_players=self.game.mystery_players
       )
 
     print("\nWELCOME TO THE GAME")
@@ -35,9 +37,9 @@ class GameRunner:
           print("Ending game.")
           break
     
-      if PROD == False:
-        print(f"correct name: {self.game.mystery_players[row]}")
-        print(f"row: {row + 1}")
+      # if PROD == False:
+      # print(f"correct name: {self.game.mystery_players[row]}")
+        # print(f"row: {row + 1}")
 
       if self.player_guessed_list[row] == True:
         print("You have already guessed this player!")
@@ -57,10 +59,15 @@ class GameRunner:
         break
 
       print("")
-      self.process_guess(guess, row)
 
-      if self.is_correct_guess(row):
-        break
+      if is_valid_player(guess):
+      # if True:
+        self.process_guess(guess, row)        
+
+        if self.is_correct_guess(row):
+          break
+      else:
+        print("Not a valid NWSL player. Guess again.")
 
   def is_correct_guess(self, row):
     if "_" not in self.mystery_players_progress[row]:
@@ -82,7 +89,9 @@ class GameRunner:
 
     self.mystery_players_progress[row] = guess_result['mystery_players_progress']
     self.players_progress[row][3] = self.mystery_players_progress[row]
-    print(guess_result["shared_letters"])
+
+    self.display_shared_letters(guess_result["shared_letters"])
+    # print(guess_result["shared_letters"])
     print(guess_result["mystery_players_progress"])
     print("")
     return self.mystery_players_progress
@@ -100,16 +109,20 @@ class GameRunner:
             print("Invalid input. Please enter a number from 1 to 4.\n")
       except ValueError:
           print("Invalid input. Please enter a valid number.\n")
-            
-  def get_guess():
-      # TO DO query database to make user guess an actual player
-      # make queries and guesses non-sensitive to special characters
-      return
-  
+
   def set_players_progress(self, players):
     for i in range(0, 4):
       players[i][3] = self.game.get_underscored_name(self.game.mystery_players[i])
-    return players     
+    return players
+  
+  def display_shared_letters(self, shared_letters):
+    print(shared_letters)
+    # main_letters = shared_letters
+    # formatted = [str(part) for part in main_letters]
+    # print(formatted)
+    # formatted_letters = str(shared_letters[:-1]).strip(",[]")
+    # print(f"{formatted_letters} Leftovers: {shared_letters[-1]}")
+    return
 
 
 if __name__ == "__main__":

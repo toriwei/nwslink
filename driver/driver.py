@@ -83,3 +83,39 @@ def get_random_teammate(team, season):
       season=season
     )
     return result.single()
+  
+def get_nonalpha_names():
+  with db.session() as session:
+    result = session.run(
+      """
+      MATCH (p:Player)
+      WHERE p.name =~ '.*[^a-zA-Z\s].*'
+      RETURN p.player_id AS player_id, p.name AS name
+      """
+    )
+    return [record for record in result]
+  
+def update_player_names(updates):
+  with db.session() as session:
+    result = session.run(
+      """
+      UNWIND $updates AS update
+      MATCH (p:Player {player_id: update.player_id})
+      SET p.name = update.updated_name
+      RETURN p
+      """,
+      updates=updates
+    )
+    return [record for record in result]
+  
+def is_valid_player(name):
+  with db.session() as session:
+    result = session.run(
+      """
+      MATCH (p:Player)
+      WHERE toUpper(p.name)=$name
+      RETURN p
+      """,
+      name=name
+    )
+    return [record for record in result]
