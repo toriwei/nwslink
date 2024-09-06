@@ -12,9 +12,8 @@ class Guess:
     aligned_guess = aligned_guess_dict["aligned_guess"]
     leftovers = aligned_guess_dict["leftover_letters"]
 
-    shared_letters, underscore_build = self.compare_guess(aligned_guess, leftovers)
+    shared_letters = self.compare_guess(aligned_guess, leftovers)
 
-    self.mystery_players_progress = self.update_underscore_progress(underscore_build)
     return {"shared_letters": shared_letters, "mystery_players_progress": self.mystery_players_progress, "aligned_guess": aligned_guess, "leftovers": leftovers}
 
   def compare_guess(self, aligned_guess, leftovers):
@@ -33,6 +32,9 @@ class Guess:
       underscore_build[i].append(' ')  
       shared_letters[i] = sorted(shared_letters[i])
 
+    underscore_build = list(chain.from_iterable(underscore_build))[:-1]
+    self.mystery_players_progress = self.update_underscore_progress(underscore_build)
+
     progress_parts = self.mystery_players_progress.split("   ")
 
     for i, shared_letter_part in enumerate(shared_letters):
@@ -42,9 +44,8 @@ class Guess:
         if count_from_underscore >= count_from_correct_name:
           shared_letter_part.remove(char)
 
-    underscore_build = list(chain.from_iterable(underscore_build))[:-1]
     shared_letters = [sorted(letters) for letters in shared_letters]
-    return shared_letters, underscore_build
+    return shared_letters
   
   def align_guess(self, guess, correct_name):
     leftover = ""
