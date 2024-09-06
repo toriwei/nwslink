@@ -15,7 +15,7 @@ class Guess:
     shared_letters, underscore_build = self.compare_guess(aligned_guess, leftovers)
 
     self.mystery_players_progress = self.update_underscore_progress(underscore_build)
-    return {"shared_letters": shared_letters, "mystery_players_progress": self.mystery_players_progress}
+    return {"shared_letters": shared_letters, "mystery_players_progress": self.mystery_players_progress, "aligned_guess": aligned_guess, "leftovers": leftovers}
 
   def compare_guess(self, aligned_guess, leftovers):
     correct_name_parts = self.correct_name.split()
@@ -36,24 +36,24 @@ class Guess:
     progress_parts = self.mystery_players_progress.split("   ")
 
     for i, shared_letter_part in enumerate(shared_letters):
-      for j, char in enumerate(shared_letter_part):
+      for j, char in enumerate(shared_letter_part[:]):
         count_from_underscore = progress_parts[i].count(char)
         count_from_correct_name = correct_name_parts[i].count(char)
-        if count_from_underscore == count_from_correct_name:
+        if count_from_underscore >= count_from_correct_name:
           shared_letter_part.remove(char)
 
     underscore_build = list(chain.from_iterable(underscore_build))[:-1]
     shared_letters = [sorted(letters) for letters in shared_letters]
-
     return shared_letters, underscore_build
   
   def align_guess(self, guess, correct_name):
     leftover = ""
-    if len(guess) > len(correct_name):
-      difference = len(guess) - len(correct_name)
-      leftover = str(guess[len(guess) - difference - 1:])
-
     guess_no_spaces = guess.replace(" ", "")
+    correct_name_no_spaces = correct_name.replace(" ", "")
+
+    if len(guess_no_spaces) > len(correct_name_no_spaces):
+      leftover = guess_no_spaces[len(correct_name_no_spaces):]  
+
     aligned_guess = ""
     guess_index = 0
 
