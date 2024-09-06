@@ -5,8 +5,8 @@ from unidecode import unidecode
 from driver import get_random_player, get_random_played_for, get_random_teammate
 
 class Game:
-  def __init__(self, PROD): 
-    self.prod = PROD
+  def __init__(self, IS_RANDOM_GAME): 
+    self.IS_RANDOM_GAME = IS_RANDOM_GAME
 
     self.players = [
       ["", "", "", ""],
@@ -51,8 +51,8 @@ class Game:
     cleaned_str = seasons.replace('[', "").replace(']', "").replace("\'", "").split(", ")
     return random.choice(cleaned_str)
 
-  def setup_game(self, PROD):
-    if PROD:
+  def setup_game(self, IS_RANDOM_GAME):
+    if IS_RANDOM_GAME:
       for i in range(4):
         if i == 0:
           # get initial mystery player

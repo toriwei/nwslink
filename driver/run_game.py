@@ -3,21 +3,24 @@ import game_utils
 from setup_game import Game
 from handle_guess import Guess
 from driver import is_valid_player
-PROD = False
+
+IS_RANDOM_GAME = True
+REVEAL_ANSWER = False
+REQUIRE_VALID_PLAYER = True
 
 class GameRunner:
-  def __init__(self, PROD):
-    self.PROD = PROD
+  def __init__(self, IS_RANDOM_GAME):
+    self.IS_RANDOM_GAME = IS_RANDOM_GAME
 
-    self.game = Game(PROD= self.PROD)
-    self.game.setup_game(PROD)
+    self.game = Game(IS_RANDOM_GAME= self.IS_RANDOM_GAME)
+    self.game.setup_game(IS_RANDOM_GAME)
     self.guess_handler = None
     self.players_progress = self.set_players_progress(self.game.players.copy())
     self.mystery_players_progress = [row[3] for row in self.players_progress]
     self.player_guessed_list = [False] * 4
 
   def run_game(self):
-    if not PROD:
+    if not IS_RANDOM_GAME:
       game_utils.print_setup(
         players=self.game.players, 
         connections=self.game.connections, 
@@ -37,9 +40,9 @@ class GameRunner:
           print("Ending game.")
           break
     
-      # if PROD == False:
-      # print(f"correct name: {self.game.mystery_players[row]}")
-        # print(f"row: {row + 1}")
+      if REVEAL_ANSWER == True:
+        print(f"correct name: {self.game.mystery_players[row]}")
+        print(f"row: {row + 1}")
 
       if self.player_guessed_list[row] == True:
         print("You have already guessed this player!")
@@ -60,8 +63,7 @@ class GameRunner:
 
       print("")
 
-      if is_valid_player(guess):
-      # if True:
+      if REQUIRE_VALID_PLAYER == False or is_valid_player(guess):
         self.process_guess(guess, row)        
 
         if self.is_correct_guess(row):
@@ -77,7 +79,6 @@ class GameRunner:
       return True
      
   def process_guess(self, guess, row):
-    # TO DO: test if valid guess
     self.guess_handler = Guess(
       self.game,
       self.game.mystery_players[row],
@@ -90,8 +91,8 @@ class GameRunner:
     self.mystery_players_progress[row] = guess_result['mystery_players_progress']
     self.players_progress[row][3] = self.mystery_players_progress[row]
 
-    self.display_shared_letters(guess_result["shared_letters"])
-    # print(guess_result["shared_letters"])
+    self.display_guess_result(guess_result)
+
     print(guess_result["mystery_players_progress"])
     print("")
     return self.mystery_players_progress
@@ -115,16 +116,16 @@ class GameRunner:
       players[i][3] = self.game.get_underscored_name(self.game.mystery_players[i])
     return players
   
-  def display_shared_letters(self, shared_letters):
-    print(shared_letters)
-    # main_letters = shared_letters
-    # formatted = [str(part) for part in main_letters]
-    # print(formatted)
-    # formatted_letters = str(shared_letters[:-1]).strip(",[]")
-    # print(f"{formatted_letters} Leftovers: {shared_letters[-1]}")
+  def display_guess_result(self, guess_result):
+    print(guess_result["shared_letters"])
+
+    aligned_guess = ' '.join(guess_result["aligned_guess"].replace("!", ' '))
+    if guess_result["leftovers"]:
+      aligned_guess += ' ' + ' '.join(guess_result["leftovers"])
+    print(aligned_guess)
     return
 
 
 if __name__ == "__main__":
-  game_runner = GameRunner(PROD)
+  game_runner = GameRunner(IS_RANDOM_GAME)
   game_runner.run_game()
