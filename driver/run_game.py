@@ -15,8 +15,10 @@ class GameRunner:
     self.game = Game(IS_RANDOM_GAME= self.IS_RANDOM_GAME)
     self.game.setup_game(IS_RANDOM_GAME)
     self.guess_handler = None
-    self.players_progress = self.set_players_progress(self.game.players.copy())
+    self.players_progress = self.game.set_players_progress(self.game.players.copy())
     self.mystery_players_progress = [row[3] for row in self.players_progress]
+    target_connection = {'team': self.game.mystery_team[0], 'season': self.game.mystery_team[1]}
+    self.mystery_connections_progress = self.game.set_connections_progress(self.game.connections, target_connection)
     self.player_guessed_list = [False] * 4
 
   def run_game(self):
@@ -32,7 +34,7 @@ class GameRunner:
     print("\nWELCOME TO THE GAME")
     
     while True:
-      print(self.game.get_grid(self.players_progress))
+      print(self.game.get_grid(self.players_progress, self.mystery_connections_progress))
 
       row = self.get_row()
 
@@ -111,17 +113,17 @@ class GameRunner:
       except ValueError:
           print("Invalid input. Please enter a valid number.\n")
 
-  def set_players_progress(self, players):
-    for i in range(0, 4):
-      players[i][3] = self.game.get_underscored_name(self.game.mystery_players[i])
-    return players
+  # def set_players_progress(self, players):
+  #   for i in range(0, 4):
+  #     players[i][3] = self.game.get_underscored_name(self.game.mystery_players[i])
+  #   return players
   
   def display_guess_result(self, guess_result):
     print(guess_result["shared_letters"])
 
     aligned_guess = ' '.join(guess_result["aligned_guess"].replace("!", ' '))
     if guess_result["leftovers"]:
-      aligned_guess += ' ' + ' '.join(guess_result["leftovers"])
+      aligned_guess += '   ' + ' '.join(guess_result["leftovers"])
     print(aligned_guess)
     return
 

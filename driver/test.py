@@ -1,25 +1,22 @@
 import unittest
 from setup_game import Game
 from handle_guess import Guess
-from game_utils import *
+from run_game import GameRunner
+from game_utils import PLAYERS
 
-def create_test_game():
-  game = Game(IS_RANDOM_GAME=False)
-  game.setup_game(IS_RANDOM_GAME=False)
+def create_test_game(IS_RANDOM_GAME=False):
+  game = Game(IS_RANDOM_GAME)
+  game.setup_game(IS_RANDOM_GAME)
   return game
 
 class TestCompareGuess(unittest.TestCase):
   def setUp(self):
-     self.game = create_test_game()
-
-  def print_result(self, correct_name, guess, progress, result):
-     print(f"Correct: {correct_name}\nGuess: {guess}\nProgress: {progress}\nResult after guess:")
-     for k, v in result.items():
-        print(f" {k}, {v}")
-     
+    self.players = PLAYERS
 
   def test_remove_duplicate_shared_letters_1(self):
-    """Check compare_guess removes previously correct letter when previous guess did not contain that letter"""
+    self.game = create_test_game()
+    self.game_runner = GameRunner(False)
+
     correct_name = "MCCALL ZERBONI"
     guess = "MELEANA SHIM"
     progress = self.game.get_underscored_name(correct_name)
@@ -46,7 +43,9 @@ class TestCompareGuess(unittest.TestCase):
     self.assertEqual("M _ _ A _ _   _ _ _ _ _ _ _", result["mystery_players_progress"])
 
   def test_remove_duplicate_shared_letters_2(self):
-    """Check compare_guess removes letter upon correctly guessing the last instance of that letter"""
+    self.game = create_test_game()
+    self.game_runner = GameRunner(False)
+
     correct_name = "HALEY KOPMEYER"
     guess = "JANINE BECKIE"
     progress = "H A L _ Y   _ O P _ E _ _ _"
@@ -55,6 +54,16 @@ class TestCompareGuess(unittest.TestCase):
 
     self.assertEqual([['E'], ['K']], result["shared_letters"])
     self.assertEqual("H A L _ Y   _ O P _ E _ E _", result["mystery_players_progress"])
+
+  def test_grid_string(self):
+    self.game = create_test_game(True)
+    self.game_runner = GameRunner(True)
+
+    try:
+        self.game.get_grid(self.game_runner.players_progress, self.game_runner.mystery_connections_progress)
+    except Exception as e:
+        self.fail(f"get_grid raised an exception: {e}")
+
 
 if __name__ == "__main__":
     unittest.main()
