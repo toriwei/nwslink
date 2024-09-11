@@ -16,7 +16,8 @@ CONNECTIONS = [
   {'team': 'Thorns', 'season': '2015'},
   {'team': 'Thorns', 'season': '2021'},
   {'team': 'Courage', 'season': '2021'},
-  {'team': 'Pride', 'season': '2019'}
+  {'team': 'Pride', 'season': '2019'},
+  {'team': 'Gotham', 'season': '2023'}
 ]
 
 MYSTERY_TEAM = Connection(team='Gotham', season='2023')

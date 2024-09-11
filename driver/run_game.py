@@ -4,9 +4,10 @@ from setup_game import Game
 from handle_guess import Guess
 from driver import is_valid_player
 
-IS_RANDOM_GAME = True
+IS_RANDOM_GAME = False
 REVEAL_ANSWER = False
 REQUIRE_VALID_PLAYER = True
+PRINT_SETUP = True
 
 class GameRunner:
   def __init__(self, IS_RANDOM_GAME):
@@ -17,12 +18,11 @@ class GameRunner:
     self.guess_handler = None
     self.players_progress = self.game.set_players_progress(self.game.players.copy())
     self.mystery_players_progress = [row[3] for row in self.players_progress]
-    target_connection = {'team': self.game.mystery_team[0], 'season': self.game.mystery_team[1]}
-    self.mystery_connections_progress = self.game.set_connections_progress(self.game.connections, target_connection)
+    self.mystery_connections_progress = self.game.set_connections_progress(self.game.connections)
     self.player_guessed_list = [False] * 4
 
   def run_game(self):
-    if not IS_RANDOM_GAME:
+    if PRINT_SETUP:
       game_utils.print_setup(
         players=self.game.players, 
         connections=self.game.connections, 
@@ -112,11 +112,6 @@ class GameRunner:
             print("Invalid input. Please enter a number from 1 to 4.\n")
       except ValueError:
           print("Invalid input. Please enter a valid number.\n")
-
-  # def set_players_progress(self, players):
-  #   for i in range(0, 4):
-  #     players[i][3] = self.game.get_underscored_name(self.game.mystery_players[i])
-  #   return players
   
   def display_guess_result(self, guess_result):
     print(guess_result["shared_letters"])

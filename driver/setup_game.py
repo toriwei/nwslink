@@ -65,6 +65,7 @@ class Game:
             mystery_team_record['t'].get('team'), 
             self.get_random_season(mystery_seasons))
           self.connections_set.add(self.mystery_team)
+          self.connections.append({'team': self.mystery_team[0], 'season': self.mystery_team[0]})
 
         else:
           # get remaining mystery players
@@ -98,8 +99,8 @@ class Game:
       self.connections_set = game_utils.CONNECTIONS_SET
     
   def get_grid(self, players, mystery_connections_progress):
-    row_connections = mystery_connections_progress[0]
-    col_connection = mystery_connections_progress[1]
+    row_connections = mystery_connections_progress[:-1]
+    col_connection = mystery_connections_progress[-1]
 
     # TODO: remove hardcoded padding from ints/widths and strs
     player_col_width = max(len(player) for row in players for player in row[:3]) + 2 # added values represent padding at end
@@ -139,7 +140,7 @@ class Game:
       players[i][3] = self.get_underscored_name(self.mystery_players[i])
     return players
   
-  def set_connections_progress(self, connections, target_connection):
+  def set_connections_progress(self, connections):
     def underscore_connection(connection):
         return {
             'team': self.get_underscored_name(connection['team']),
@@ -147,7 +148,5 @@ class Game:
         }
     
     connections_progress = [underscore_connection(dict) for dict in connections]
-    
-    target_connection_progress = underscore_connection(target_connection)
-    
-    return [connections_progress, target_connection_progress]
+
+    return connections_progress
