@@ -102,14 +102,12 @@ class Game:
     row_connections = mystery_connections_progress[:-1]
     col_connection = mystery_connections_progress[-1]
 
-    # TODO: remove hardcoded padding from ints/widths and strs
-    player_col_width = max(len(player) for row in players for player in row[:3]) + 2 # added values represent padding at end
+    player_col_width = max(len(player) for row in players for player in row[:3]) + 2  # padding
     mystery_player_col_width = max(max(len(row[3]) for row in players), max(len(col_connection), len("COLUMN CONNECTION"))) + 2
-    max_team_name_length = max(len(connection['team']) for connection in row_connections) + 2
-    mystery_connection_col_width = max_team_name_length + max(len(connection['season']) for connection in row_connections) + 3 # accounts for required space between team and season
-    
-    col_connection_str = f"{col_connection['team']:<{mystery_player_col_width - len(col_connection['season']) - 3}} {col_connection['season']}"
-    
+    mystery_connection_col_width = max(len(connection) for connection in row_connections) + 2
+
+    col_connection_str = f"{col_connection:<{mystery_connection_col_width}}"
+
     separator = "+--" + "+--".join(["-" * player_col_width] * 3 + ["-" * mystery_player_col_width] + ["-" * mystery_connection_col_width]) + "+"
     label_space = "".join(f"  {' ':<{player_col_width}}" for _ in range(3)) + "   "
 
@@ -117,19 +115,17 @@ class Game:
     grid_str += separator
 
     for i, row in enumerate(players):
-      grid_str += "\n|" + "|".join(f"  {player:<{player_col_width}}" for player in row[:3]) + f"|  {row[3]:<{mystery_player_col_width}}"
+        grid_str += "\n|" + "|".join(f"  {player:<{player_col_width}}" for player in row[:3]) + f"|  {row[3]:<{mystery_player_col_width}}"
 
-      team_name = row_connections[i]['team']
-      season = row_connections[i]['season']
-      connection = f"{team_name:<{max_team_name_length}} {season}"
-      grid_str += f"|  {connection:<{mystery_connection_col_width}}|"
-      
-      grid_str += "\n" + separator
-    
+        connection = row_connections[i]
+        grid_str += f"|  {connection:<{mystery_connection_col_width}}|"
+        grid_str += "\n" + separator
+
     grid_str += "\n\n" + label_space + f"{'   COLUMN CONNECTION':<{player_col_width + 2}}"
     grid_str += "\n" + label_space + "+--" + "+--".join(["-" * mystery_player_col_width]) + "+"
     grid_str += "\n" + label_space + "|" + f"  {col_connection_str:<{mystery_player_col_width}}|"
     grid_str += "\n" + label_space + "+--" + "+--".join(["-" * mystery_player_col_width]) + "+"
+
     return grid_str
   
   def get_underscored_name(self, player):
@@ -142,11 +138,10 @@ class Game:
   
   def set_connections_progress(self, connections):
     def underscore_connection(connection):
-        return {
-            'team': self.get_underscored_name(connection['team']),
-            'season': self.get_underscored_name(str(connection['season']))
-        }
-    
-    connections_progress = [underscore_connection(dict) for dict in connections]
+        team, season = connection.rsplit(' ', 1)
+        
+        underscored_connection = f"{self.get_underscored_name(team)}   {self.get_underscored_name(season)}"
+        return underscored_connection
 
+    connections_progress = [underscore_connection(connection) for connection in connections]
     return connections_progress

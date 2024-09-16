@@ -4,7 +4,7 @@ from unidecode import unidecode
 Connection = namedtuple('Connection', ['team', 'season'])
 
 PLAYERS = [
-  ['Clare Polkinghorne', 'Kendall Johnson', 'Michelle Betos', 'Sinead Farrelly'],
+  ['Clare Polkinghorne', 'Kendall Johnson', 'Michelle Betos', 'Kate Del Fava'],
   ['Raquel Rodríguez', 'Emily Menges', 'Simone Charley', 'Yazmeen Ryan'],
   ['Cari Roccaro', 'Kendall Fletcher', 'Lynn Williams', 'Taylor Smith'],
   ['Emily van Egmond', 'Toni Pressley', 'Ashlyn Harris', 'Kristen Edmonds']
@@ -13,7 +13,7 @@ PLAYERS = [
 PLAYERS = [[unidecode(player.upper()) for player in row] for row in PLAYERS]
 
 CONNECTIONS = [
-  {'team': 'Thorns', 'season': '2015'},
+  {'team': 'Sky Blue', 'season': '2015'},
   {'team': 'Thorns', 'season': '2021'},
   {'team': 'Courage', 'season': '2021'},
   {'team': 'Pride', 'season': '2019'},

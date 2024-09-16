@@ -20,27 +20,27 @@ class TestCompareGuess(unittest.TestCase):
     correct_name = "MCCALL ZERBONI"
     guess = "MELEANA SHIM"
     progress = self.game.get_underscored_name(correct_name)
-    guess_handler = Guess(self.game, correct_name, progress, guess)
+    guess_handler = Guess(self.game, correct_name, progress, guess, is_player_guess=True)
     result = guess_handler.handle_guess()
 
     self.assertEqual([['A', 'L'], ['E', 'I', 'N']], result["shared_letters"])
-    self.assertEqual("M _ _ _ _ _   _ _ _ _ _ _ _", result["mystery_players_progress"])
+    self.assertEqual("M _ _ _ _ _   _ _ _ _ _ _ _", result["progress"])
 
     guess = "SARAH GORDEN"
-    progress = result["mystery_players_progress"]
-    guess_handler = Guess(self.game, correct_name, progress, guess)
+    progress = result["progress"]
+    guess_handler = Guess(self.game, correct_name, progress, guess, is_player_guess=True)
     result = guess_handler.handle_guess()
 
     self.assertEqual([[], ['E', 'N', 'O', 'R']], result["shared_letters"])
-    self.assertEqual("M _ _ A _ _   _ _ _ _ _ _ _", result["mystery_players_progress"])
+    self.assertEqual("M _ _ A _ _   _ _ _ _ _ _ _", result["progress"])
 
     guess = "NADIA NADIM"
-    progress = result["mystery_players_progress"]
-    guess_handler = Guess(self.game, correct_name, progress, guess)
+    progress = result["progress"]
+    guess_handler = Guess(self.game, correct_name, progress, guess, is_player_guess=True)
     result = guess_handler.handle_guess()
 
     self.assertEqual([[], ['I', 'N']], result["shared_letters"])
-    self.assertEqual("M _ _ A _ _   _ _ _ _ _ _ _", result["mystery_players_progress"])
+    self.assertEqual("M _ _ A _ _   _ _ _ _ _ _ _", result["progress"])
 
   def test_remove_duplicate_shared_letters_2(self):
     self.game = create_test_game()
@@ -49,11 +49,11 @@ class TestCompareGuess(unittest.TestCase):
     correct_name = "HALEY KOPMEYER"
     guess = "JANINE BECKIE"
     progress = "H A L _ Y   _ O P _ E _ _ _"
-    guess_handler = Guess(self.game, correct_name, progress, guess)
+    guess_handler = Guess(self.game, correct_name, progress, guess, is_player_guess=True)
     result = guess_handler.handle_guess()
 
     self.assertEqual([['E'], ['K']], result["shared_letters"])
-    self.assertEqual("H A L _ Y   _ O P _ E _ E _", result["mystery_players_progress"])
+    self.assertEqual("H A L _ Y   _ O P _ E _ E _", result["progress"])
 
   def test_grid_string(self):
     self.game = create_test_game(True)
@@ -64,6 +64,33 @@ class TestCompareGuess(unittest.TestCase):
     except Exception as e:
         self.fail(f"get_grid raised an exception: {e}")
 
+  def test_connection_check_1(self):
+     self.game = create_test_game(False)
+     self.game_runner = GameRunner(False)
+
+     answer = "SKY BLUE 2015"
+     guess = "COURAGE 2021"
+     progress = "_ _ _   _ _ _ _   _ _ _ _"
+
+     guess_handler = Guess(self.game, answer, progress, guess, is_player_guess=False)
+
+     result = guess_handler.handle_guess()
+     self.assertEqual({'team': [[], ['U']], 'season': [['1']]}, result["shared_letters"])
+     self.assertEqual("_ _ _   _ _ _ E   2 0 _ _", result["progress"])
+
+  def test_connection_check_2(self):
+    self.game = create_test_game(False)
+    self.game_runner = GameRunner(False)
+
+    answer = "THORNS 2021"
+    guess = "COURAGE 2021"
+    progress = "_ _ _ _ _ _   _ _ _ _"
+
+    guess_handler = Guess(self.game, answer, progress, guess, is_player_guess=False)
+
+    result = guess_handler.handle_guess()
+    self.assertEqual({'team': [['O']], 'season': [[]]}, result["shared_letters"])
+    self.assertEqual("_ _ _ R _ _   2 0 2 1", result["progress"])
 
 if __name__ == "__main__":
     unittest.main()
