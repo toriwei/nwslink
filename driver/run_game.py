@@ -80,10 +80,11 @@ class GameRunner:
 
   def is_correct_guess(self, row, is_player_guess):
     answer = self.mystery_players_progress[row] if is_player_guess else self.mystery_connections_progress[row]
+    guessed_list = self.player_guessed_list if is_player_guess else self.connections_guessed_list
     is_correct = "_" not in answer
     if is_correct:
-      self.player_guessed_list[row] = True
-      print("Correctly gussed mystery player!")
+      guessed_list[row] = True
+      print("Correct!")
       time.sleep(1)
       return True
      
@@ -142,17 +143,15 @@ class GameRunner:
     return
   
   def display_connection_guess_result(self, guess_result):
-    print(guess_result["shared_letters"])
+    print(f'{guess_result["shared_letters"]["team"]} {guess_result["shared_letters"]["season"]}')
 
     aligned_guess = ' '.join(guess_result["aligned_guess"].replace("!", ' '))
-
     guess_parts = aligned_guess.split('   ')
-    team = guess_parts[:-1][-1]
-    season = guess_parts[-1]
 
     if guess_result["leftovers"]["team"]:
-      team += '   ' + ' '.join(guess_result["leftovers"]["team"])
-    aligned_guess = team + '   ' + season
+      leftovers =  ' '.join(guess_result["leftovers"]["team"]) + '   '
+      guess_parts.insert(len(guess_parts) - 1, leftovers)
+      aligned_guess = '   '.join(guess_parts)
     print(aligned_guess)
     return
   
