@@ -119,3 +119,15 @@ def is_valid_player(name):
       name=name
     )
     return [record for record in result]
+  
+def is_valid_team_name(team):
+  with db.session() as session:
+    result = session.run(
+      """
+      MATCH (t:Team)
+      WHERE toUpper(t.team)=$team
+      RETURN t
+      """,
+      team=team
+    )
+    return result.single()

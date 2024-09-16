@@ -2,11 +2,11 @@ import time
 import game_utils
 from setup_game import Game
 from handle_guess import Guess
-from driver import is_valid_player
+from driver import is_valid_player, is_valid_team_name
 
 IS_RANDOM_GAME = False
 REVEAL_ANSWER = True
-REQUIRE_VALID_PLAYER = True
+REQUIRE_VALID_GUESS = False
 PRINT_SETUP = True
 
 class GameRunner:
@@ -33,7 +33,7 @@ class GameRunner:
         mystery_players=self.game.mystery_players
       )
 
-    print("\nWELCOME TO THE GAME")
+    print("\nWELCOME TO NWSLINK")
     
     while True:
       print(self.game.get_grid(self.players_progress, self.mystery_connections_progress))
@@ -55,6 +55,7 @@ class GameRunner:
         self.run_guess_loop(row, is_player_guess)
         if all(self.player_guessed_list) and all(self.connections_guessed_list):
           print("Completed Game!")
+          print(self.game.get_grid(self.players_progress, self.mystery_connections_progress))
           return
   
   def run_guess_loop(self, row, is_player_guess):
@@ -71,12 +72,25 @@ class GameRunner:
 
       print("")
 
-      if is_player_guess and (REQUIRE_VALID_PLAYER and not is_valid_player(guess)):
-        print("Not a valid NWSL player. Guess again.")
+      if is_player_guess:
+        if REQUIRE_VALID_GUESS and not is_valid_player(guess):
+            print("Not a valid NWSL player. Guess again.")
+            print(f"{self.mystery_players_progress[row]}\n")
+        else:
+            self.process_guess(guess, row, is_player_guess)
+            if self.is_correct_guess(row, is_player_guess):
+              break
       else:
-        self.process_guess(guess, row, is_player_guess)
-        if self.is_correct_guess(row, is_player_guess):
-          break
+          if ' ' not in guess:
+            print("Not a valid link format. The format is [team_name] [year].")
+            print(f"{self.mystery_connections_progress[row]}\n")
+          elif REQUIRE_VALID_GUESS and not is_valid_team_name(''.join(guess.split(' ')[:-1])):
+              print("Not a valid NWSL team. Guess again.")
+              print(f"{self.mystery_connections_progress[row]}\n")
+          else:
+              self.process_guess(guess, row, is_player_guess)
+              if self.is_correct_guess(row, is_player_guess):
+                break
 
   def is_correct_guess(self, row, is_player_guess):
     answer = self.mystery_players_progress[row] if is_player_guess else self.mystery_connections_progress[row]
@@ -119,7 +133,7 @@ class GameRunner:
 
   def get_row(self):
     while True:
-      row = input("Enter a number to make a guess.\nPLAYER:   1-4\nROW LINK: 5-8\nCOL LINK: 9\n\n")
+      row = input("Enter a number to make a guess.\nPLAYERS:   1-4\nROW LINKS: 5-8\nCOL LINK:  9\n\n")
       if row == "end":
           return ""
       try:

@@ -102,38 +102,41 @@ class Game:
     row_connections = mystery_connections_progress[:-1]
     col_connection = mystery_connections_progress[-1]
 
+    row_label_length = 5 # label = '[i]  '
+
     player_col_width = max(len(player) for row in players for player in row[:3]) + 2  # padding
     mystery_player_col_width = max(max(len(row[3]) for row in players), max(len(col_connection), len("COLUMN CONNECTION"))) + 2
-    mystery_connection_col_width = max(len(connection) for connection in row_connections) + 2
+    mystery_connection_col_width = max(len(connection) for connection in row_connections) + 2 
 
-    col_connection_str = f"{col_connection:<{mystery_connection_col_width}}"
+    col_connection_str = f"{col_connection:<{mystery_player_col_width}}"
 
-    separator = "+--" + "+--".join(["-" * player_col_width] * 3 + ["-" * mystery_player_col_width] + ["-" * mystery_connection_col_width]) + "+"
+    separator = "+--" + "+--".join(["-" * player_col_width] * 3 + ["-" * (mystery_player_col_width + row_label_length)] + ["-" * (mystery_connection_col_width + row_label_length)]) + "+"
     label_space = "".join(f"  {' ':<{player_col_width}}" for _ in range(3)) + "   "
 
-    grid_str = label_space + f"{'   MYSTERY PLAYERS':<{mystery_player_col_width + 4}}" + f"{'  ROW CONNECTIONS':<{mystery_connection_col_width + 2}}\n"
+    grid_str = label_space + f"{'   MYSTERY PLAYERS':<{mystery_player_col_width + 4 + row_label_length}}" + f"{'  ROW LINKS':<{mystery_connection_col_width + 2}}\n"
     grid_str += separator
 
     for i, row in enumerate(players):
-        grid_str += "\n|" + "|".join(f"  {player:<{player_col_width}}" for player in row[:3]) + f"|  {row[3]:<{mystery_player_col_width}}"
+        grid_str += "\n|" + "|".join(f"  {player:<{player_col_width}}" for player in row[:3]) + f"|  [{i + 1}]  {row[3]:<{mystery_player_col_width}}"
 
         connection = row_connections[i]
-        grid_str += f"|  {connection:<{mystery_connection_col_width}}|"
+        grid_str += f"|  [{i + 5}]  {connection:<{mystery_connection_col_width}}|"
         grid_str += "\n" + separator
 
-    grid_str += "\n\n" + label_space + f"{'   COLUMN CONNECTION':<{player_col_width + 2}}"
-    grid_str += "\n" + label_space + "+--" + "+--".join(["-" * mystery_player_col_width]) + "+"
-    grid_str += "\n" + label_space + "|" + f"  {col_connection_str:<{mystery_player_col_width}}|"
-    grid_str += "\n" + label_space + "+--" + "+--".join(["-" * mystery_player_col_width]) + "+"
+    grid_str += "\n\n" + label_space + f"{'   COLUMN LINK':<{mystery_player_col_width + 2}}"
+    grid_str += "\n" + label_space + "+--" + "+--".join(["-" * (mystery_player_col_width + row_label_length)]) + "+"
+    grid_str += "\n" + label_space + "|" + f"  [9]  {col_connection_str}|"
+    grid_str += "\n" + label_space + "+--" + "+--".join(["-" * (mystery_player_col_width + row_label_length)]) + "+"
 
     return grid_str
   
-  def get_underscored_name(self, player):
-    return " ".join("_" if char != " " else "  " for char in player)
+  def get_underscored_name(self, phrase):
+    return "   ".join(" ".join("_" for _ in phrase_part) for phrase_part in phrase.split(' '))
 
   def set_players_progress(self, players):
     for i in range(0, 4):
       players[i][3] = self.get_underscored_name(self.mystery_players[i])
+
     return players
   
   def set_connections_progress(self, connections):

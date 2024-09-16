@@ -55,7 +55,7 @@ class TestCompareGuess(unittest.TestCase):
     self.assertEqual([['E'], ['K']], result["shared_letters"])
     self.assertEqual("H A L _ Y   _ O P _ E _ E _", result["progress"])
 
-  def test_grid_string(self):
+  def test_grid_string_1(self):
     self.game = create_test_game(True)
     self.game_runner = GameRunner(True)
 
@@ -64,6 +64,15 @@ class TestCompareGuess(unittest.TestCase):
     except Exception as e:
         self.fail(f"get_grid raised an exception: {e}")
 
+  def test_grid_string_2(self):
+    self.game = create_test_game(IS_RANDOM_GAME=False)
+    self.game_runner = GameRunner(IS_RANDOM_GAME=False)
+
+    try:
+        self.game.get_grid(self.game_runner.players_progress, self.game_runner.mystery_connections_progress)
+    except Exception as e:
+        self.fail(f"get_grid raised an exception: {e}")
+        
   def test_connection_check_1(self):
      self.game = create_test_game(False)
      self.game_runner = GameRunner(False)
