@@ -65,7 +65,7 @@ class Game:
             mystery_team_record['t'].get('team'), 
             self.get_random_season(mystery_seasons))
           self.connections_set.add(self.mystery_team)
-          self.connections.append({'team': self.mystery_team[0], 'season': self.mystery_team[0]})
+          self.connections.append({'team': self.mystery_team[0], 'season': self.mystery_team[1]})
 
         else:
           # get remaining mystery players
