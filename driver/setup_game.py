@@ -1,7 +1,6 @@
 import random
 import game_utils
 from collections import namedtuple
-from unidecode import unidecode
 from driver import get_random_player, get_random_played_for, get_random_teammate
 
 class Game:
@@ -32,11 +31,12 @@ class Game:
   def get_unique_teammate(self, team=None, season=None):
     while True:
       player = get_random_teammate(team, season)
-      player_name = player['p'].get('name')
+      player_name = player.get('name')
       if player_name not in self.players_set:
         self.players_set.add(player_name)
         return player
       
+  #TODO debug
   def get_unique_season(self, player, team=None):
     while True:
       connection = get_random_played_for(player, team)
@@ -57,9 +57,9 @@ class Game:
         if i == 0:
           # get initial mystery player
           mystery_player = get_random_player()
-          mystery_team_record = get_random_played_for(mystery_player['p'].get('name'))
+          mystery_team_record = get_random_played_for(mystery_player.get('name'))
           mystery_seasons = mystery_team_record['f'].get('seasons')
-          
+
           # get and set mystery team
           self.mystery_team = self.Connection(
             mystery_team_record['t'].get('team'), 
@@ -72,7 +72,7 @@ class Game:
           mystery_player = self.get_unique_teammate(self.mystery_team.team, self.mystery_team.season)
 
         # set mystery player
-        mystery_player_name = mystery_player['p'].get('name') 
+        mystery_player_name = mystery_player.get('name') 
         self.mystery_players[i] = mystery_player_name    
         self.players[i][3] = mystery_player_name
         self.players_set.add(mystery_player_name)
@@ -85,7 +85,7 @@ class Game:
         # get and set remaining players
         for j in range(3):
           teammate = self.get_unique_teammate(connection.team, connection.season) 
-          self.players[i][j] = teammate['p'].get('name')
+          self.players[i][j] = teammate.get('name')
           self.players[i][j]
 
       self.players = [[player.upper() for player in row] for row in self.players]

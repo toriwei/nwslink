@@ -1,4 +1,5 @@
 import os
+import random
 
 from neo4j import GraphDatabase
 
@@ -40,30 +41,31 @@ def get_shortest_path(player_1, player_2):
 def get_random_player():
   with db.session() as session:
     result = session.run(
-    """
-    MATCH (p:Player)-[f:PLAYED_FOR]->(t:Team)
-    WITH p, COUNT(t) AS num_teams
-    WHERE num_teams > 1
-    WITH p ORDER BY rand() LIMIT 1
-    RETURN p
-    """
+      """
+      MATCH (p:Player)-[f:PLAYED_FOR]->(t:Team)
+      WITH p, COUNT(t) AS num_teams
+      WHERE num_teams > 1
+      RETURN p
+      """
     )
-    return result.single()
+    players = [record['p'] for record in result]    
+    return random.choice(players) if players else None
   
-def get_random_played_for(player= None, team= None):
+def get_random_played_for(player=None, team=None):
   with db.session() as session:
     result = session.run(
-    """
-    MATCH (p:Player)-[f:PLAYED_FOR]->(t:Team)
-    WHERE (p.name = $player OR $player IS NULL)
-    AND (t.team <> $team OR $team IS NULL)
-    WITH t, f ORDER BY rand() LIMIT 1
-    RETURN *
-    """,
-    player= player,
-    team= team,
+      """
+      MATCH (p:Player)-[f:PLAYED_FOR]->(t:Team)
+      WHERE (p.name = $player OR $player IS NULL)
+      AND (t.team <> $team OR $team IS NULL)
+      RETURN t, f
+      """,
+      player= player,
+      team= team,
     )
-    return result.single()
+
+    teams = [record for record in result]
+    return random.choice(teams) if teams else None
   
 def get_random_teammate(team, season):
   with db.session() as session:
@@ -76,13 +78,13 @@ def get_random_teammate(team, season):
       MATCH (p:Player)-[f:PLAYED_FOR]->(t:Team)
       WITH p, COUNT(t) AS num_teams
       WHERE num_teams > 1
-      WITH p ORDER BY rand() LIMIT 1
       RETURN p
       """,
       team=team,
       season=season
     )
-    return result.single()
+    players = [record['p'] for record in result]
+    return random.choice(players) if players else None
   
 def get_nonalpha_names():
   with db.session() as session:
