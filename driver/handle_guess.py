@@ -9,6 +9,11 @@ class Guess:
     self.is_player_guess = is_player_guess
 
   def handle_guess(self):
+    """Processes the user's guess and updates progress.
+
+    Returns:
+        dict: Contains shared letters, updated progress, aligned guess, and leftover letters.
+    """
     if self.is_player_guess:
       aligned_guess_dict = self.align_guess(self.guess, self.answer)
       aligned_guess = aligned_guess_dict["aligned_guess"]
@@ -40,6 +45,18 @@ class Guess:
     return {"shared_letters": shared_letters, "progress": self.progress, "aligned_guess": aligned_guess, "leftovers": leftovers}
 
   def compare_guess(self, aligned_guess, leftovers, answer, is_team=False):
+    """Compares the aligned guess with the correct answer and updates the progress.
+
+    Args:
+        aligned_guess (str): The guess aligned to the spacing of the answer.
+        leftovers (str): Extra letters if the guess is longer than the answer.
+        answer (str): The correct answer.
+        is_team (bool, optional): Whether the guess is for a team or not.
+
+    Returns:
+        shared_letters (list): A list of lists containing shared letters for
+          each part of the player name or team and season of the link
+    """
     answer_parts = answer.split()
     aligned_guess_parts = aligned_guess.split()
     shared_letters = [[] for _ in answer.split()]
@@ -81,6 +98,15 @@ class Guess:
     return shared_letters
   
   def align_guess(self, guess, answer):
+    """Aligns the user's guess with the correct answer's spacing.
+
+    Args:
+        guess (str): The user's guess.
+        answer (str): The correct answer.
+
+    Returns:
+        dict: Contains the aligned guess and any leftover letters.
+    """
     leftover = ""
     guess_no_spaces = guess.replace(" ", "")
     answer_no_spaces = answer.replace(" ", "")
@@ -103,6 +129,15 @@ class Guess:
     return {"aligned_guess": aligned_guess, "leftover_letters": leftover.replace(" ", "")}
 
   def update_underscore_progress(self, new_underscore, is_team=False):
+    """Updates the progress string, replacing underscores with correctly guessed letters.
+
+    Args:
+        new_underscore (str): The new progress string with underscores and correctly guessed letters.
+        is_team (bool, optional): Whether the guess is for a team.
+
+    Returns:
+        str: The updated progress string.
+    """
     if self.is_player_guess:
       existing_underscore = self.progress
     else: 

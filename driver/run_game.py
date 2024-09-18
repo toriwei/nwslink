@@ -4,15 +4,14 @@ from setup_game import Game
 from handle_guess import Guess
 from driver import is_valid_player, is_valid_team_name
 
-IS_RANDOM_GAME = False
-REVEAL_ANSWER = True
-REQUIRE_VALID_GUESS = False
-PRINT_SETUP = True
+IS_RANDOM_GAME = True
+REVEAL_ANSWER = False
+REQUIRE_VALID_GUESS = True
+PRINT_SETUP = False
 
 class GameRunner:
   def __init__(self, IS_RANDOM_GAME):
     self.IS_RANDOM_GAME = IS_RANDOM_GAME
-
     self.game = Game(IS_RANDOM_GAME= self.IS_RANDOM_GAME)
     self.game.setup_game(IS_RANDOM_GAME)
     self.guess_handler = None
@@ -24,6 +23,11 @@ class GameRunner:
     self.connections_guessed_list = [False] * 5
 
   def run_game(self):
+    """Runs the main game loop.
+    
+    Handles displaying game grid, prompting user for guesses, and displaying results.
+    """
+
     if PRINT_SETUP:
       game_utils.print_setup(
         players=self.game.players, 
@@ -59,6 +63,15 @@ class GameRunner:
           return
   
   def run_guess_loop(self, row, is_player_guess):
+    """
+    Handles the loop for making guesses.
+
+    If REQUIRED_VALID_GUESS is True, checks if guess is a valid player/team.
+
+    Args:
+      row (int): The number where the guess is being made (0-based index).
+      is_player_guess (bool): Indicates if the guess is for a player (True) or a link (False).
+    """
     print("\nEnter your guess or press enter to return to row selection.")
     if is_player_guess:
       print(f"{self.mystery_players_progress[row]}\n")
@@ -84,7 +97,7 @@ class GameRunner:
           if ' ' not in guess:
             print("Not a valid link format. The format is [team_name] [year].")
             print(f"{self.mystery_connections_progress[row]}\n")
-          elif REQUIRE_VALID_GUESS and not is_valid_team_name(''.join(guess.split(' ')[:-1])):
+          elif REQUIRE_VALID_GUESS and not is_valid_team_name(' '.join(guess.split(' ')[:-1])):
               print("Not a valid NWSL team. Guess again.")
               print(f"{self.mystery_connections_progress[row]}\n")
           else:
@@ -93,6 +106,7 @@ class GameRunner:
                 break
 
   def is_correct_guess(self, row, is_player_guess):
+    """Checks if the player's guess is correct."""
     answer = self.mystery_players_progress[row] if is_player_guess else self.mystery_connections_progress[row]
     guessed_list = self.player_guessed_list if is_player_guess else self.connections_guessed_list
     is_correct = "_" not in answer
@@ -103,6 +117,13 @@ class GameRunner:
       return True
      
   def process_guess(self, guess, row, is_player_guess):
+    """Processes the player's guess and updates game progress.
+
+    Args:
+      guess (str): The player's guess (either a player name or a team/season connection).
+      row (int): The row number where the guess is being made.
+      is_player_guess (bool): Indicatesif the guess is for a player (True) or a connection (False).
+    """
     answer = self.game.mystery_players[row] if is_player_guess else self.connections_str[row]
     progress = self.mystery_players_progress[row] if is_player_guess else self.mystery_connections_progress[row]
     self.guess_handler = Guess(
@@ -132,6 +153,12 @@ class GameRunner:
       return
 
   def get_row(self):
+    """
+    Prompts the user to select a valid row to guess.
+
+    Returns:
+      tuple: ((int), (bool)): The selected row and flag indicating a player guess
+    """
     while True:
       row = input("Enter a number to make a guess.\nPLAYERS:   1-4\nROW LINKS: 5-8\nCOL LINK:  9\n\n")
       if row == "end":
@@ -148,6 +175,11 @@ class GameRunner:
           print("Invalid input. Please enter a valid number.\n")
   
   def display_guess_result(self, guess_result):
+    """Prints the shared letters and aligned guess to show progress on a player guess.
+
+    Args:
+      guess_result (dict): Shared letters, aligned guess, and leftover letters
+    """
     print(guess_result["shared_letters"])
 
     aligned_guess = ' '.join(guess_result["aligned_guess"].replace("!", ' '))
@@ -157,6 +189,11 @@ class GameRunner:
     return
   
   def display_connection_guess_result(self, guess_result):
+    """Prints the shared letters and aligned guess to show progress on a link guess.
+
+    Args:
+      guess_result (dict): Shared letters, aligned guess, and leftover letters
+    """
     print(f'{guess_result["shared_letters"]["team"]} {guess_result["shared_letters"]["season"]}')
 
     aligned_guess = ' '.join(guess_result["aligned_guess"].replace("!", ' '))
@@ -169,7 +206,6 @@ class GameRunner:
     print(aligned_guess)
     return
   
-
 if __name__ == "__main__":
   game_runner = GameRunner(IS_RANDOM_GAME)
   game_runner.run_game()

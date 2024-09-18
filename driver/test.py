@@ -101,5 +101,9 @@ class TestCompareGuess(unittest.TestCase):
     self.assertEqual({'team': [['O']], 'season': [[]]}, result["shared_letters"])
     self.assertEqual("_ _ _ R _ _   2 0 2 1", result["progress"])
 
+  def test_setup_1(self):
+    self.game = create_test_game(IS_RANDOM_GAME=True)
+    self.game_runner = GameRunner(IS_RANDOM_GAME=True)
+
 if __name__ == "__main__":
     unittest.main()

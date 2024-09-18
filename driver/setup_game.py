@@ -28,7 +28,16 @@ class Game:
     self.mystery_team = None
     self.Connection = namedtuple('Connection', ['team', 'season'])
 
-  def get_unique_teammate(self, team=None, season=None):
+  def get_unique_teammate(self, team, season):
+    """Retrieves a random player for a given club and season.
+
+    Args:
+      team (str): The team of the random player.
+      season (str): The season of the random player.
+    
+    Returns:
+      neo4j.graph.Node: A Neo4j node representing the player.
+    """
     while True:
       player = get_random_teammate(team, season)
       player_name = player.get('name')
@@ -36,8 +45,16 @@ class Game:
         self.players_set.add(player_name)
         return player
       
-  #TODO debug
-  def get_unique_season(self, player, team=None):
+  def get_unique_season(self, player, team):
+    """Retrieves a unique season/team combination for a given player.
+
+    Args:
+      player (str): The player's name.
+      team (str): The team to filter by (optional).
+
+    Returns:
+      namedtuple: A tuple with the team and season.
+    """
     while True:
       connection = get_random_played_for(player, team)
       team = connection['t'].get('team')
@@ -48,10 +65,24 @@ class Game:
         return connection_tuple
 
   def get_random_season(self, seasons):
+    """Cleans and returns a random season from a list of seasons.
+
+    Args:
+      seasons (str): A string representing a list of seasons (e.g., "['2021', '2022']").
+
+    Returns:
+      str: A randomly selected season.
+    """
     cleaned_str = seasons.replace('[', "").replace(']', "").replace("\'", "").split(", ")
     return random.choice(cleaned_str)
 
   def setup_game(self, IS_RANDOM_GAME):
+    """Initializes players and their team connections. Can be configured to 
+    use random data or test data from game_utils.
+    
+    Args:
+      IS_RANDOM_GAME (bool): Indicates using random data or test data for game setup.
+    """
     if IS_RANDOM_GAME:
       for i in range(4):
         if i == 0:
@@ -99,6 +130,7 @@ class Game:
       self.connections_set = game_utils.CONNECTIONS_SET
     
   def get_grid(self, players, mystery_connections_progress):
+    """Generates a string representation of the game grid."""
     row_connections = mystery_connections_progress[:-1]
     col_connection = mystery_connections_progress[-1]
 
@@ -131,15 +163,18 @@ class Game:
     return grid_str
   
   def get_underscored_name(self, phrase):
+    """Converts a phrase (player name or team name) into underscored format for display."""
     return "   ".join(" ".join("_" for _ in phrase_part) for phrase_part in phrase.split(' '))
 
   def set_players_progress(self, players):
+    """Gets mystery players from list of all players and initializes their progress."""
     for i in range(0, 4):
       players[i][3] = self.get_underscored_name(self.mystery_players[i])
 
     return players
   
   def set_connections_progress(self, connections):
+    """Converts connections dictionary to string and initializes progress."""
     def underscore_connection(connection):
         team, season = connection.rsplit(' ', 1)
         
