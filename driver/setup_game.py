@@ -117,7 +117,6 @@ class Game:
         for j in range(3):
           teammate = self.get_unique_teammate(connection.team, connection.season) 
           self.players[i][j] = teammate.get('name')
-          self.players[i][j]
 
       self.players = [[player.upper() for player in row] for row in self.players]
       self.mystery_players = [player.upper() for player in self.mystery_players]

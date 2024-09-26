@@ -6,3 +6,4 @@ teams.csv
 env
 __pycache__
 sandbox*
+.env
