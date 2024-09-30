@@ -109,9 +109,9 @@ class Game {
       this.mysteryConnection = MYSTERY_TEAM
       this.mysteryPlayers = MYSTERY_PLAYERS
       this.connectionsSet = CONNECTIONS_SET
-      console.log(this.players)
-      console.log(this.connections)
-      console.log(this.mysteryPlayers)
+      // console.log(this.players)
+      // console.log(this.connections)
+      // console.log(this.mysteryPlayers)
     }
   }
   // API CALL METHODS
@@ -202,9 +202,9 @@ class Game {
         phrasePart
           .split('')
           .map(() => '_')
-          .join(' ')
+          .join('')
       )
-      .join('   ')
+      .join(' ')
   }
 
   setPlayersProgress(players) {
