@@ -8,25 +8,60 @@ class Guess {
   }
 
   handleGuess() {
-    let alignedGuessResult = undefined
-    if (this.isPlayerGuess) {
-      alignedGuessResult = this.alignGuess()
-      this.sharedLetters = this.compareGuess(
-        alignedGuessResult.alignedGuess,
-        alignedGuessResult.leftovers
-      )
+    const alignAndCompare = (guess, answer, isTeam = false) => {
+      const result = this.alignGuess(guess, answer)
+      return {
+        sharedLetters: this.compareGuess(
+          result.alignedGuess,
+          result.leftovers,
+          answer,
+          isTeam
+        ),
+        progress: this.progress,
+        alignedGuess: result.alignedGuess,
+        leftovers: result.leftovers,
+      }
     }
+
+    if (this.isPlayerGuess) {
+      return alignAndCompare(this.guess, this.answer)
+    }
+
+    const answerParts = this.answer.split(' ')
+    const guessParts = this.guess.split(' ')
+
+    const [answerTeam, answerSeason] = [
+      answerParts.slice(0, -1).join(' '),
+      answerParts.slice(-1)[0],
+    ]
+    const [guessTeam, guessSeason] = [
+      guessParts.slice(0, -1).join(' '),
+      guessParts.slice(-1)[0],
+    ]
+
+    const resultTeam = alignAndCompare(guessTeam, answerTeam, true)
+
+    const resultSeason = alignAndCompare(guessSeason, answerSeason)
+
+    const alignedGuess = `${resultTeam.alignedGuess} ${resultSeason.alignedGuess}`
+    this.sharedLetters = this.sharedLetters
+
+    const leftovers = {
+      team: resultTeam.leftovers,
+      season: resultSeason.leftovers,
+    }
+
     return {
       sharedLetters: this.sharedLetters,
       progress: this.progress,
-      alignedGuess: alignedGuessResult.alignedGuess,
-      leftovers: alignedGuessResult.leftovers,
+      alignedGuess: alignedGuess,
+      leftovers: leftovers,
     }
   }
 
-  alignGuess() {
-    const guessNoSpaces = this.guess.replace(/\s/g, '')
-    const answerNoSpaces = this.answer.replace(/\s/g, '')
+  alignGuess(guess, answer) {
+    const guessNoSpaces = guess.replace(/\s/g, '')
+    const answerNoSpaces = answer.replace(/\s/g, '')
 
     let leftovers =
       guessNoSpaces.length > answerNoSpaces.length
@@ -36,7 +71,7 @@ class Guess {
     let alignedGuessStr = ''
     let guessStrIndex = 0
 
-    for (let char of this.answer) {
+    for (let char of answer) {
       if (char === ' ') {
         alignedGuessStr += ' '
       } else if (guessStrIndex < guessNoSpaces.length) {
@@ -50,17 +85,34 @@ class Guess {
   }
 
   // can probably break into more helpers
-  compareGuess(alignedGuess, leftovers, isTeam = false) {
+  compareGuess(alignedGuess, leftovers, answer, isTeam = false) {
     // get underscore representation of correct letters
     let answerParts = this.answer.split(' ')
     if (this.sharedLetters.length === 0) {
       this.sharedLetters = [...Array(answerParts.length)].map(() => [])
     }
 
-    let underscoreBuild = this.getUnderscoreBuild(alignedGuess, leftovers)
+    let underscoreBuild = this.getUnderscoreBuild(
+      alignedGuess,
+      leftovers,
+      answer
+    )
 
     if (this.isPlayerGuess) {
-      this.progress = this.updateProgress(underscoreBuild, isTeam)
+      this.progress = this.updateProgress(underscoreBuild)
+    } else {
+      let splitProgress = this.progress.split(' ')
+      if (isTeam) {
+        let teamProgress = this.updateProgress(
+          underscoreBuild,
+          (isTeam = true)
+        ).split(' ')
+        teamProgress.map((progressPart, i) => (splitProgress[i] = progressPart))
+      } else {
+        splitProgress[splitProgress.length - 1] =
+          this.updateProgress(underscoreBuild)
+      }
+      this.progress = splitProgress.join(' ')
     }
 
     // remove shared letter if already guessed all of that letter in the
@@ -93,8 +145,8 @@ class Guess {
     return this.sharedLetters
   }
 
-  getUnderscoreBuild(alignedGuess, leftovers) {
-    let answerParts = this.answer.split(' ')
+  getUnderscoreBuild(alignedGuess, leftovers, answer) {
+    let answerParts = answer.split(' ')
     let guessParts = alignedGuess.split(' ')
     let underscoreBuild = answerParts
       .map((answerPart, i) => {
@@ -124,6 +176,13 @@ class Guess {
 
     if (this.isPlayerGuess) {
       existingUnderscore = this.progress
+    } else {
+      let splitProgress = this.progress.split(' ')
+      if (isTeam) {
+        existingUnderscore = splitProgress.slice(0, -1).join(' ')
+      } else {
+        existingUnderscore = splitProgress.slice(-1)[0]
+      }
     }
 
     let updatedProgress = newUnderscore

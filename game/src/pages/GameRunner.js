@@ -41,6 +41,7 @@ export default function GameRunner() {
     e.target.elements.row.value = ''
   }
 
+  // could condense player and link guess
   const handlePlayerGuess = (e) => {
     e.preventDefault()
     const guessInput = e.target.elements.guess.value
@@ -60,8 +61,21 @@ export default function GameRunner() {
     return
   }
 
-  const handleLinkGuess = (guessInput) => {
-    guessInput.preventDefault()
+  const handleLinkGuess = (e) => {
+    e.preventDefault()
+    const guessInput = e.target.elements.guess.value
+    const answer = gameProgress.game.connections[row]
+    const progress = gameProgress.mysteryConnectionsProgress[row]
+    const sharedLetters = gameProgress.mysteryPlayersSharedLetters[row]
+
+    const guessObj = new Guess(
+      answer,
+      progress,
+      sharedLetters,
+      guessInput,
+      isPlayerGuess
+    )
+    console.log(guessObj)
     return
   }
 
