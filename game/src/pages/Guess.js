@@ -42,9 +42,7 @@ class Guess {
     const resultTeam = alignAndCompare(guessTeam, answerTeam, true)
 
     const resultSeason = alignAndCompare(guessSeason, answerSeason)
-
     const alignedGuess = `${resultTeam.alignedGuess} ${resultSeason.alignedGuess}`
-    this.sharedLetters = this.sharedLetters
 
     const leftovers = {
       team: resultTeam.leftovers,
@@ -95,7 +93,8 @@ class Guess {
     let underscoreBuild = this.getUnderscoreBuild(
       alignedGuess,
       leftovers,
-      answer
+      answer,
+      isTeam
     )
 
     if (this.isPlayerGuess) {
@@ -145,29 +144,33 @@ class Guess {
     return this.sharedLetters
   }
 
-  getUnderscoreBuild(alignedGuess, leftovers, answer) {
-    let answerParts = answer.split(' ')
+  getUnderscoreBuild(alignedGuess, leftovers, answer, isTeam = false) {
+    let answerParts = answer.split(' ').map((part) => part.split(''))
     let guessParts = alignedGuess.split(' ')
+
+    let sharedLettersArray =
+      this.isPlayerGuess || isTeam
+        ? this.sharedLetters
+        : this.sharedLetters.slice(-1)
+
     let underscoreBuild = answerParts
       .map((answerPart, i) => {
         return answerPart
-          .split('')
           .map((char, j) => {
             if (guessParts[i][j] === char) {
               return char
-            } else {
-              if (
-                (alignedGuess.includes(char) || leftovers.includes(char)) &&
-                !this.sharedLetters[i].includes(char)
-              ) {
-                this.sharedLetters[i].push(char)
-              }
-              return '_'
+            } else if (
+              (alignedGuess.includes(char) || leftovers.includes(char)) &&
+              !sharedLettersArray[i].includes(char)
+            ) {
+              sharedLettersArray[i].push(char)
             }
+            return '_'
           })
           .join('')
       })
       .join(' ')
+
     return underscoreBuild
   }
 
@@ -178,26 +181,16 @@ class Guess {
       existingUnderscore = this.progress
     } else {
       let splitProgress = this.progress.split(' ')
-      if (isTeam) {
-        existingUnderscore = splitProgress.slice(0, -1).join(' ')
-      } else {
-        existingUnderscore = splitProgress.slice(-1)[0]
-      }
+      existingUnderscore = isTeam
+        ? splitProgress.slice(0, -1).join(' ')
+        : splitProgress.slice(-1)[0]
     }
 
     let updatedProgress = newUnderscore
       .split('')
       .map((char1, i) => {
         let char2 = existingUnderscore[i]
-        if (char1 == ' ') {
-          return ' '
-        } else if (char1 != ' ' && char1 != '_') {
-          return char1
-        } else if (char2 != ' ' && char2 != '_') {
-          return char2
-        } else {
-          return '_'
-        }
+        return char1 !== '_' ? char1 : char2 !== '_' ? char2 : '_'
       })
       .join('')
 

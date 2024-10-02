@@ -62,7 +62,7 @@ describe('helper functions in handleGuess - players', function () {
     })
   })
 
-  describe('handle guess - shared letters', function () {
+  describe('sharedLetters', function () {
     it('should remove duplicated letters based on progress and guess', function () {
       const guessObj = new Guess(
         'HALEY KOPMEYER',
@@ -78,7 +78,284 @@ describe('helper functions in handleGuess - players', function () {
   })
 })
 
-describe('handleGuess - players', function () {
+describe('helper functions in handleGuess - links', function () {
+  describe('check each value', function () {
+    const guessObj = new Guess(
+      'LOUISVILLE 2024',
+      '__________ ____',
+      [],
+      'DASH 2024',
+      false
+    )
+
+    const result = guessObj.handleGuess()
+    it('should assign shared letters for team and season', function () {
+      assert.deepEqual(result.sharedLetters, [['S'], []])
+    })
+
+    it('should update progress with correct letters and numbers', function () {
+      assert.equal(result.progress, '__________ 2024')
+    })
+
+    it('should add exclamations to short team guess', function () {
+      assert.equal(result.alignedGuess, 'DASH!!!!!! 2024')
+    })
+
+    it('should recognize when there are no leftover characters', function () {
+      assert.deepEqual(result.leftovers, {
+        team: '',
+        season: '',
+      })
+    })
+  })
+})
+
+describe('handleGuess', function () {
+  describe('player guesses', function () {
+    describe('one part answer', function () {
+      it('should handle one part answer and one part guess', function () {
+        const guessObj = new Guess('ADRIANA', '_______', [], 'MARTA', true)
+        const result = guessObj.handleGuess()
+        const expected = {
+          sharedLetters: [['A']],
+          progress: '__R_A__',
+          alignedGuess: 'MARTA!!',
+          leftovers: '',
+        }
+        assert.deepEqual(result, expected)
+      })
+
+      it('should handle one part answer and two part guess', function () {
+        const guessObj = new Guess(
+          'ADRIANA',
+          '_______',
+          [],
+          "LO'EAU LABONTA",
+          true
+        )
+        const result = guessObj.handleGuess()
+        const expected = {
+          sharedLetters: [['A', 'N']],
+          progress: '____A__',
+          alignedGuess: "LO'EAUL",
+          leftovers: 'ABONTA',
+        }
+        assert.deepEqual(result, expected)
+      })
+
+      it('should handle one part answer and three part guess', function () {
+        const guessObj = new Guess(
+          'ADRIANA',
+          '_______',
+          [],
+          'LISA DE VANNA',
+          true
+        )
+        const result = guessObj.handleGuess()
+        const expected = {
+          sharedLetters: [['A', 'D', 'I', 'N']],
+          progress: '_______',
+          alignedGuess: 'LISADEV',
+          leftovers: 'ANNA',
+        }
+        assert.deepEqual(result, expected)
+      })
+    })
+    describe('two part answer', function () {
+      it('should handle two part answer and one part guess', function () {
+        const guessObj = new Guess(
+          "LO'EAU LABONTA",
+          '______ _______',
+          [],
+          'ADRIANA',
+          true
+        )
+        const result = guessObj.handleGuess()
+        const expected = {
+          sharedLetters: [[], ['A', 'N']],
+          progress: '____A_ _______',
+          alignedGuess: 'ADRIAN A!!!!!!',
+          leftovers: '',
+        }
+        assert.deepEqual(result, expected)
+      })
+      it('should handle two part answer and two part guess', function () {
+        const guessObj = new Guess(
+          "LO'EAU LABONTA",
+          '______ _______',
+          [],
+          'ANGELINA ANDERSON',
+          true
+        )
+        const result = guessObj.handleGuess()
+        const expected = {
+          sharedLetters: [
+            ['A', 'L', 'O'],
+            ['A', 'L', 'N', 'O'],
+          ],
+          progress: '___E__ _A_____',
+          alignedGuess: 'ANGELI NAANDER',
+          leftovers: 'SON',
+        }
+        assert.deepEqual(result, expected)
+      })
+
+      it('should handle two part answer and three part guess', function () {
+        const guessObj = new Guess(
+          "LO'EAU LABONTA",
+          '______ _______',
+          [],
+          'LISA DE VANNA',
+          true
+        )
+        const result = guessObj.handleGuess()
+        const expected = {
+          sharedLetters: [
+            ['A', 'E'],
+            ['A', 'L', 'N'],
+          ],
+          progress: 'L_____ _A_____',
+          alignedGuess: 'LISADE VANNA!!',
+          leftovers: '',
+        }
+        assert.deepEqual(result, expected)
+      })
+    })
+    describe('three part answer', function () {
+      it('should handle three part answer and one part guess', function () {
+        const guessObj = new Guess(
+          'LISA DE VANNA',
+          '____ __ _____',
+          [],
+          'ADRIANA',
+          true
+        )
+        const result = guessObj.handleGuess()
+        const expected = {
+          sharedLetters: [['A', 'I'], ['D'], ['A', 'N']],
+          progress: '____ __ _____',
+          alignedGuess: 'ADRI AN A!!!!',
+          leftovers: '',
+        }
+        assert.deepEqual(result, expected)
+      })
+      it('should handle three part answer and two part guess', function () {
+        const guessObj = new Guess(
+          'LISA DE VANNA',
+          '____ __ _____',
+          [],
+          "LO'EAU LABONTA",
+          true
+        )
+        const result = guessObj.handleGuess()
+        const expected = {
+          sharedLetters: [['A'], ['E'], ['A', 'N']],
+          progress: 'L___ __ _A___',
+          alignedGuess: "LO'E AU LABON",
+          leftovers: 'TA',
+        }
+        assert.deepEqual(result, expected)
+      })
+      it('should handle three part answer and three part guess', function () {
+        const guessObj = new Guess(
+          'LISA DE VANNA',
+          '____ __ _____',
+          [],
+          'EMILY VAN EGMOND',
+          true
+        )
+        const result = guessObj.handleGuess()
+        const expected = {
+          sharedLetters: [
+            ['A', 'I', 'L'],
+            ['D', 'E'],
+            ['A', 'N', 'V'],
+          ],
+          progress: '____ __ _____',
+          alignedGuess: 'EMIL YV ANEGM',
+          leftovers: 'OND',
+        }
+        assert.deepEqual(result, expected)
+      })
+    })
+  })
+  describe('link guesses', function () {
+    describe('one part team answer', function () {
+      it('should handle one part answer and one part guess', function () {
+        const guessObj = new Guess(
+          'GOTHAM 2023',
+          '______ ____',
+          [],
+          'BOSTON 2013',
+          false
+        )
+        const result = guessObj.handleGuess()
+        const expected = {
+          sharedLetters: [['T'], ['2']],
+          progress: '_O____ 20_3',
+          alignedGuess: 'BOSTON 2013',
+          leftovers: { team: '', season: '' },
+        }
+        assert.deepEqual(result, expected)
+      })
+      it('should handle one part answer and two part guess', function () {
+        const guessObj = new Guess(
+          'GOTHAM 2023',
+          '______ ____',
+          [],
+          'ANGEL CITY 2024',
+          false
+        )
+        const result = guessObj.handleGuess()
+        const expected = {
+          sharedLetters: [['A', 'G', 'T'], []],
+          progress: '______ 202_',
+          alignedGuess: 'ANGELC 2024',
+          leftovers: { team: 'ITY', season: '' },
+        }
+        assert.deepEqual(result, expected)
+      })
+    })
+    describe('two part team answer', function () {
+      it('should handle two part answer and one part guess', function () {
+        const guessObj = new Guess(
+          'ANGEL CITY 2024',
+          '_____ ____ ____',
+          [],
+          'GOTHAM 2023',
+          false
+        )
+        const result = guessObj.handleGuess()
+        const expected = {
+          sharedLetters: [['A', 'G'], ['T'], []],
+          progress: '_____ ____ 202_',
+          alignedGuess: 'GOTHA M!!! 2023',
+          leftovers: { team: '', season: '' },
+        }
+        assert.deepEqual(result, expected)
+      })
+      it('should handle two part answer and two part guess', function () {
+        const guessObj = new Guess(
+          'ANGEL CITY 2024',
+          '_____ ____ ____',
+          [],
+          'KANSAS CITY 2013',
+          false
+        )
+        const result = guessObj.handleGuess()
+        const expected = {
+          sharedLetters: [['A', 'N'], ['C', 'I', 'T', 'Y'], ['2']],
+          progress: '_____ ____ 20__',
+          alignedGuess: 'KANSA SCIT 2013',
+          leftovers: { team: 'Y', season: '' },
+        }
+        assert.deepEqual(result, expected)
+      })
+    })
+  })
+})
+
+describe('progress and shared letter updates', function () {
   it('should handle progress and shared letter updates', function () {
     const guessObj = new Guess(
       'MCCALL ZERBONI',
@@ -112,62 +389,5 @@ describe('handleGuess - players', function () {
       alignedGuess: 'SARAHG ORDEN!!',
       leftovers: '',
     })
-  })
-})
-
-describe('connection handleGuess', function () {
-  describe('check each value', function () {
-    const guessObj = new Guess(
-      'LOUISVILLE 2024',
-      '__________ ____',
-      [],
-      'DASH 2024',
-      false
-    )
-
-    const result = guessObj.handleGuess()
-    it('should assign shared letters for team and season', function () {
-      assert.deepEqual(result.sharedLetters, [['S'], []])
-    })
-
-    it('should update progress with correct letters and numbers', function () {
-      assert.equal(result.progress, '__________ 2024')
-    })
-
-    it('should add exclamations to short team guess', function () {
-      assert.equal(result.alignedGuess, 'DASH!!!!!! 2024')
-    })
-
-    it('should recognize when there are no leftover characters', function () {
-      assert.deepEqual(result.leftovers, {
-        team: '',
-        season: '',
-      })
-    })
-  })
-})
-
-describe('connection handleGuess 2', function () {
-  it('should handleGuess: answer KANSAS CITY 2014 guess ANGEL CITY 2024', function () {
-    const guessObj = new Guess(
-      'KANSAS CITYY 2014',
-      '______ _____ ____',
-      [],
-      'ANGEL CITY 2024',
-      false
-    )
-
-    const result = guessObj.handleGuess()
-
-    const expected = {
-      sharedLetters: [['A', 'N'], ['C', 'I', 'T', 'Y'], []],
-      progress: '______ _____ 20_4',
-      alignedGuess: 'ANGELC ITY!! 2024',
-      leftovers: {
-        team: '',
-        season: '',
-      },
-    }
-    assert.deepEqual(result, expected)
   })
 })
