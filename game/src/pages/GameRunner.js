@@ -16,12 +16,11 @@ export default function GameRunner() {
     connectionsGuessedList: [false, false, false, false, false],
   })
   const hasRun = useRef(false)
-
   const [row, setRow] = useState(undefined)
   const [isPlayerGuess, setIsPlayerGuess] = useState(undefined)
   const [inputError, setInputError] = useState('')
-
   const [guess, setGuess] = useState('')
+  const [successMessage, setSuccessMessage] = useState('')
 
   const handleRowSubmit = (e) => {
     e.preventDefault()
@@ -31,23 +30,51 @@ export default function GameRunner() {
     } else {
       setInputError('')
       if (rowSelection <= 4) {
-        setRow(rowSelection - 1)
-        setIsPlayerGuess(true)
+        if (gameProgress.playerGuessedList[rowSelection - 1]) {
+          setInputError('Already complete!')
+        } else {
+          setRow(rowSelection - 1)
+          setIsPlayerGuess(true)
+          console.log(
+            'ANSWER:',
+            gameProgress.game.mysteryPlayers[rowSelection - 1]
+          )
+        }
       } else {
         setRow(rowSelection - 5)
         setIsPlayerGuess(false)
+        console.log('ANSWER:', gameProgress.game.connections[rowSelection - 5])
       }
     }
     e.target.elements.row.value = ''
   }
 
-  // could condense player and link guess
-  const handlePlayerGuess = (e) => {
+  const handleGuess = (e) => {
     e.preventDefault()
     const guessInput = e.target.elements.guess.value.toUpperCase()
-    const answer = gameProgress.game.mysteryPlayers[row]
-    const progress = gameProgress.mysteryPlayersProgress[row]
-    const sharedLetters = gameProgress.mysteryPlayersSharedLetters[row]
+
+    let answer,
+      progress,
+      sharedLetters,
+      sharedLettersKey,
+      progressKey,
+      guessedListKey
+    if (isPlayerGuess) {
+      answer = gameProgress.game.mysteryPlayers[row]
+      progress = gameProgress.mysteryPlayersProgress[row]
+      sharedLetters = gameProgress.mysteryPlayersSharedLetters[row]
+      sharedLettersKey = 'mysteryPlayersSharedLetters'
+      progressKey = 'mysteryPlayersProgress'
+      guessedListKey = 'playerGuessedList'
+    } else {
+      answer = gameProgress.game.connections[row]
+      progress = gameProgress.mysteryConnectionsProgress[row]
+      sharedLetters = gameProgress.mysteryConnectionsSharedLetters[row]
+      sharedLettersKey = 'mysteryConnectionsSharedLetters'
+      progressKey = 'mysteryConnectionsProgress'
+      guessedListKey = 'connectionsGuessedList'
+    }
+
     const guessObj = new Guess(
       answer,
       progress,
@@ -60,54 +87,59 @@ export default function GameRunner() {
       setGuess('')
       return
     }
-
     console.log(guessObj)
     let result = guessObj.handleGuess()
     console.log(result)
 
     setGameProgress((prev) => ({
       ...prev,
-      mysteryPlayersSharedLetters: prev.mysteryPlayersSharedLetters.map(
-        (part, i) => (i === row ? result.sharedLetters : part)
+      [sharedLettersKey]: prev[sharedLettersKey].map((part, i) =>
+        i === row ? result.sharedLetters : part
       ),
-      mysteryPlayersProgress: prev.mysteryPlayersProgress.map((part, i) =>
+      [progressKey]: prev[progressKey].map((part, i) =>
         i === row ? result.progress : part
       ),
-      playersProgress: prev.playersProgress.map((gridRow, i) =>
-        i === row
-          ? gridRow.map((player, j) => (j === 3 ? result.progress : player))
-          : gridRow
+      playersProgress: isPlayerGuess
+        ? prev.playersProgress.map((gridRow, i) =>
+            i === row
+              ? gridRow.map((player, j) => (j === 3 ? result.progress : player))
+              : gridRow
+          )
+        : prev.playersProgress,
+      mysteryConnectionsProgress: isPlayerGuess
+        ? prev.mysteryConnectionsProgress
+        : prev.mysteryConnectionsProgress.map((connection, i) =>
+            i === row ? result.progress : connection
+          ),
+      [guessedListKey]: prev[guessedListKey].map((guessed, i) =>
+        i === row ? !result.progress.includes('_') : guessed
       ),
     }))
 
     let guessBuild = result.alignedGuess.replace(/!/g, '').split(' ')
-    let leftovers = result.leftovers.length > 0 ? result.leftovers : []
-    if (leftovers.length > 0) {
-      guessBuild = guessBuild.concat(leftovers) // Append leftovers after the space
+
+    if (isPlayerGuess) {
+      let leftovers = result.leftovers.length > 0 ? result.leftovers : []
+      if (leftovers.length > 0) {
+        guessBuild = guessBuild.concat(leftovers)
+      }
+    } else if (result.leftovers.team.length > 0) {
+      guessBuild = [
+        ...guessBuild.slice(0, guessBuild.length - 1),
+        result.leftovers.team,
+        guessBuild.slice(guessBuild.length - 1)[0],
+      ]
     }
-    console.log(guessBuild)
+
     setGuess(guessBuild)
 
+    if (!result.progress.includes('_')) {
+      setSuccessMessage('Correct! Press enter to return to row selection.')
+    } else {
+      setSuccessMessage('')
+    }
+
     e.target.elements.guess.value = ''
-    return
-  }
-
-  const handleLinkGuess = (e) => {
-    e.preventDefault()
-    const guessInput = e.target.elements.guess.value
-    const answer = gameProgress.game.connections[row]
-    const progress = gameProgress.mysteryConnectionsProgress[row]
-    const sharedLetters = gameProgress.mysteryPlayersSharedLetters[row]
-
-    const guessObj = new Guess(
-      answer,
-      progress,
-      sharedLetters,
-      guessInput,
-      isPlayerGuess
-    )
-    console.log(guessObj)
-    setGuessResult(guessObj.handleGuess())
     return
   }
 
@@ -133,6 +165,16 @@ export default function GameRunner() {
     ))
   }
 
+  const isCorrectGuess = () => {
+    const currentGuessResult = isPlayerGuess
+      ? gameProgress.mysteryPlayersProgress[row]
+      : gameProgress.mysteryConnectionsProgress[row]
+    const guessedList = isPlayerGuess
+      ? gameProgress.playerGuessedList
+      : gameProgress.connectionsGuessedList
+
+    return !currentGuessResult.includes('_') && guessedList[row]
+  }
   useEffect(() => {
     async function initializeGame() {
       const game = new Game(IS_RANDOM_GAME)
@@ -180,112 +222,111 @@ export default function GameRunner() {
         <p>Loading...</p>
       )}
       <div className='min-h-36 mx-48 content-end'>
-        <div className=''>
-          {row === undefined ? (
-            <div>
-              <form onSubmit={handleRowSubmit}>
-                <label>
-                  <div className='flex justify-center'>
-                    <span className='mr-4'>Enter a number 1-9:</span>
-                    <div className='flex flex-col relative'>
-                      {inputError && (
-                        <p className='absolute -top-5 pl-4 text-red-500 text-sm'>
-                          {inputError}
-                        </p>
-                      )}
-                      <input
-                        autoFocus
-                        type='number'
-                        className='border'
-                        name='row'
-                        autoComplete='off'
-                        onKeyDown={(e) =>
-                          ['e', 'E', '+', '-', '.'].includes(e.key) &&
-                          e.preventDefault()
-                        }
-                      />
-                    </div>
-                  </div>
-                </label>
-              </form>
-            </div>
-          ) : (
-            <div>
-              <div className='flex flex-col'>
-                <div className='flex flex-row flex-1'>
-                  <div className='flex-1 text-right mr-4'>Shared Letters: </div>
-                  <div className='flex-1 space-x-8'>
-                    {row <= 4
-                      ? getFormattedSharedLetters(
-                          gameProgress.mysteryPlayersSharedLetters[row]
-                        )
-                      : getFormattedSharedLetters(
-                          gameProgress.mysteryConnectionsSharedLetters[row]
-                        )}
-                  </div>
-                </div>
-                <div className='flex flex-row flex-1 '>
-                  <div className='flex-1 text-right mr-4'>Your Guess: </div>
-                  <div className='flex-1 space-x-8'>
-                    {guess &&
-                      guess.map((part, i) => (
-                        <span key={i} className='space-x-2'>
-                          {part.split('').map((char, j) => (
-                            <span key={j} className=''>
-                              {char}
-                            </span>
-                          ))}
-                        </span>
-                      ))}
-                  </div>
-                </div>
-                <div className='flex flex-row flex-1'>
-                  <div className='flex-1 text-right mr-4'>Progress: </div>
-                  <div className='flex-1 space-x-8'>
-                    {row <= 4
-                      ? getFormattedProgress(
-                          gameProgress.mysteryPlayersProgress[row]
-                        )
-                      : getFormattedProgress(
-                          gameProgress.mysteryConnectionsProgress[row]
-                        )}
-                  </div>
-                </div>
-                <div className='flex flex-row flex-1'>
-                  <div className='flex-1 text-right'>
-                    <label htmlFor='guess' className='mr-4'>
-                      Enter your guess:
-                    </label>
-                  </div>
-                  <div className='flex-1'>
-                    <form
-                      onSubmit={
-                        isPlayerGuess ? handlePlayerGuess : handleLinkGuess
+        {row === undefined ? (
+          <div>
+            <form onSubmit={handleRowSubmit}>
+              <label>
+                <div className='flex justify-center'>
+                  <span className='mr-4'>Enter a number 1-9:</span>
+                  <div className='flex flex-col relative'>
+                    {inputError && (
+                      <p className='absolute -top-5 pl-4 text-red-500 text-sm'>
+                        {inputError}
+                      </p>
+                    )}
+                    <input
+                      autoFocus
+                      type='number'
+                      className='border'
+                      name='row'
+                      autoComplete='off'
+                      onKeyDown={(e) =>
+                        ['e', 'E', '+', '-', '.'].includes(e.key) &&
+                        e.preventDefault()
                       }
-                    >
-                      <div className='flex'>
-                        <div className='flex flex-col relative'>
-                          {inputError && (
-                            <p className='absolute -top-5 pl-4 text-red-500 text-sm'>
-                              {inputError}
-                            </p>
-                          )}
-                          <input
-                            autoFocus
-                            type='text'
-                            className='border'
-                            name='guess'
-                            autoComplete='off'
-                          />
-                        </div>
+                    />
+                  </div>
+                </div>
+              </label>
+            </form>
+          </div>
+        ) : (
+          <div>
+            <div className='flex flex-col'>
+              <div className='flex flex-row flex-1'>
+                <div className='flex-1 text-right mr-4'>Shared Letters: </div>
+                <div className='flex-1 space-x-8'>
+                  {isPlayerGuess
+                    ? getFormattedSharedLetters(
+                        gameProgress.mysteryPlayersSharedLetters[row]
+                      )
+                    : getFormattedSharedLetters(
+                        gameProgress.mysteryConnectionsSharedLetters[row]
+                      )}
+                </div>
+              </div>
+              <div className='flex flex-row flex-1 '>
+                <div className='flex-1 text-right mr-4'>Your Guess: </div>
+                <div className='flex-1 space-x-8'>
+                  {guess &&
+                    guess.map((part, i) => (
+                      <span key={i} className='space-x-2'>
+                        {part.split('').map((char, j) => (
+                          <span key={j} className=''>
+                            {char}
+                          </span>
+                        ))}
+                      </span>
+                    ))}
+                </div>
+              </div>
+              <div className='flex flex-row flex-1'>
+                <div className='flex-1 text-right mr-4'>Progress: </div>
+                <div className='flex-1 space-x-8'>
+                  {isPlayerGuess
+                    ? getFormattedProgress(
+                        gameProgress.mysteryPlayersProgress[row]
+                      )
+                    : getFormattedProgress(
+                        gameProgress.mysteryConnectionsProgress[row]
+                      )}
+                </div>
+              </div>
+              <div className='flex flex-row flex-1'>
+                <div className='flex-1 text-right mr-4'>
+                  <label>Enter your guess:</label>
+                </div>
+                <div className='flex-1'>
+                  <form onSubmit={handleGuess}>
+                    <div className='flex'>
+                      <div className='flex flex-col relative'>
+                        {inputError && (
+                          <p className='absolute -top-5 pl-4 text-red-500 text-sm'>
+                            {inputError}
+                          </p>
+                        )}
+                        <input
+                          autoFocus
+                          type='text'
+                          className='border'
+                          name='guess'
+                          autoComplete='off'
+                        />
                       </div>
-                    </form>
+                    </div>
+                  </form>
+                  <div className='h-6'>
+                    {guess && isCorrectGuess() && (
+                      <span className='absolute text-green-500 text-sm'>
+                        {successMessage}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   )

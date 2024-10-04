@@ -356,7 +356,7 @@ describe('handleGuess', function () {
 })
 
 describe('progress and shared letter updates', function () {
-  it('should handle progress and shared letter updates', function () {
+  it('should handle sequences for MCCALL ZERBONI', function () {
     const guessObj = new Guess(
       'MCCALL ZERBONI',
       '______ _______',
@@ -388,6 +388,31 @@ describe('progress and shared letter updates', function () {
       progress: 'M__A__ _______',
       alignedGuess: 'SARAHG ORDEN!!',
       leftovers: '',
+    })
+  })
+  describe('should handle sequences for KATE DEL FAVA', function () {
+    it('should handle guess 1', function () {
+      const guess1 = new Guess(
+        'KATE DEL FAVA',
+        '____ ___ ____',
+        [],
+        'KATELYN ROWLAND',
+        true
+      )
+      const result1 = guess1.handleGuess()
+      assert.deepEqual(result1.sharedLetters, [[], ['D', 'E', 'L'], ['A']])
+    })
+
+    it('should handle guess 2', function () {
+      const guess2 = new Guess(
+        'KATE DEL FAVA',
+        'KATE ___ ____',
+        [[], ['D', 'E', 'L'], ['A']],
+        'TOBIN HEATH',
+        true
+      )
+      const result2 = guess2.handleGuess()
+      assert.deepEqual(result2.sharedLetters, [[], ['D', 'E', 'L'], ['A']])
     })
   })
 })

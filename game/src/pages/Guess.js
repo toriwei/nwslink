@@ -5,6 +5,8 @@ class Guess {
     this.sharedLetters = sharedLetters
     this.guess = guess
     this.isPlayerGuess = isPlayerGuess
+    console.log('ANSWER:', answer)
+    console.log('GUESS:', guess)
   }
 
   handleGuess() {
@@ -122,21 +124,24 @@ class Guess {
 
     answerParts = answerParts.map((answerPart) => answerPart.split(''))
 
-    this.sharedLetters.map((sharedLetterPart, i) =>
-      sharedLetterPart.map((char) => {
-        let underscoreCharCount = progressParts[i].filter(
-          (curr) => curr === char
-        ).length
-        let answerCharCount = answerParts[i].filter(
-          (curr) => curr === char
-        ).length
-        if (underscoreCharCount >= answerCharCount) {
-          this.sharedLetters[i] = sharedLetterPart.filter(
-            (curr) => curr !== char
-          )
-        }
-      })
-    )
+    this.sharedLetters = this.sharedLetters.map((sharedLetterPart, i) => {
+      console.log(sharedLetterPart)
+      return sharedLetterPart
+        .map((char) => {
+          console.log(char)
+          let underscoreCharCount = progressParts[i].filter(
+            (curr) => curr === char
+          ).length
+          let answerCharCount = answerParts[i].filter(
+            (curr) => curr === char
+          ).length
+          if (underscoreCharCount < answerCharCount) {
+            return char
+          }
+          return null
+        })
+        .filter((char) => char !== null)
+    })
 
     this.sharedLetters = this.sharedLetters.map((sharedLetterPart) =>
       sharedLetterPart.sort()
