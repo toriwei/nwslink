@@ -29,8 +29,6 @@ class Game {
     this.mysteryPlayers = ['', '', '', '']
     this.playersSet = new Set()
     this.connectionsSet = new Set()
-
-    // this.setupGame(IS_RANDOM_GAME)
   }
 
   async setupGame() {
@@ -99,19 +97,12 @@ class Game {
       this.connections = this.connections.map(
         (connection) => `${connection.team.toUpperCase()} ${connection.season}`
       )
-      console.log('DONE')
-      console.log(this.players)
-      console.log(this.connections)
-      console.log(this.mysteryPlayers)
     } else {
       this.players = PLAYERS
       this.connections = CONNECTIONS
       this.mysteryConnection = MYSTERY_TEAM
       this.mysteryPlayers = MYSTERY_PLAYERS
       this.connectionsSet = CONNECTIONS_SET
-      // console.log(this.players)
-      // console.log(this.connections)
-      // console.log(this.mysteryPlayers)
     }
   }
   // API CALL METHODS

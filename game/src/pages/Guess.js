@@ -42,14 +42,11 @@ class Guess {
     ]
 
     const resultTeam = alignAndCompare(guessTeam, answerTeam, true)
-
     const resultSeason = alignAndCompare(guessSeason, answerSeason)
+
     const alignedGuess = `${resultTeam.alignedGuess} ${resultSeason.alignedGuess}`
 
-    const leftovers = {
-      team: resultTeam.leftovers,
-      season: resultSeason.leftovers,
-    }
+    const leftovers = resultTeam.leftovers
 
     return {
       sharedLetters: this.sharedLetters,
@@ -125,10 +122,8 @@ class Guess {
     answerParts = answerParts.map((answerPart) => answerPart.split(''))
 
     this.sharedLetters = this.sharedLetters.map((sharedLetterPart, i) => {
-      console.log(sharedLetterPart)
       return sharedLetterPart
         .map((char) => {
-          console.log(char)
           let underscoreCharCount = progressParts[i].filter(
             (curr) => curr === char
           ).length

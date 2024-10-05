@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react'
 import Game from './Game'
 import Grid from './Grid'
 import Guess from './Guess'
+import RowInput from './RowInput'
+import GuessInput from './GuessInput'
 
 export default function GameRunner() {
   const IS_RANDOM_GAME = false
@@ -17,86 +19,94 @@ export default function GameRunner() {
   })
   const hasRun = useRef(false)
   const [row, setRow] = useState(undefined)
+  const [gridRow, setGridRow] = useState(undefined)
   const [isPlayerGuess, setIsPlayerGuess] = useState(undefined)
   const [inputError, setInputError] = useState('')
   const [guess, setGuess] = useState('')
-  const [successMessage, setSuccessMessage] = useState('')
+  const [showCorrect, setShowCorrect] = useState(false)
+  const [gameComplete, setGameComplete] = useState(undefined)
 
   const handleRowSubmit = (e) => {
     e.preventDefault()
+
     const rowSelection = parseInt(e.target.elements.row.value)
-    if (rowSelection === NaN || rowSelection < 1 || rowSelection > 9) {
+
+    if (isNaN(rowSelection) || rowSelection < 1 || rowSelection > 9) {
       setInputError('Must be 1-9')
-    } else {
-      setInputError('')
-      if (rowSelection <= 4) {
-        if (gameProgress.playerGuessedList[rowSelection - 1]) {
-          setInputError('Already complete!')
-        } else {
-          setRow(rowSelection - 1)
-          setIsPlayerGuess(true)
-          console.log(
-            'ANSWER:',
-            gameProgress.game.mysteryPlayers[rowSelection - 1]
-          )
-        }
-      } else {
-        setRow(rowSelection - 5)
-        setIsPlayerGuess(false)
-        console.log('ANSWER:', gameProgress.game.connections[rowSelection - 5])
-      }
+      e.target.elements.row.value = ''
+      return
     }
+
+    setInputError('')
+    setGridRow(rowSelection)
+
+    const isPlayerRow = rowSelection <= 4
+    const rowIndex = isPlayerRow ? rowSelection - 1 : rowSelection - 5
+    const isRowComplete = isPlayerRow
+      ? gameProgress.playerGuessedList[rowIndex]
+      : gameProgress.connectionsGuessedList[rowIndex]
+
+    if (isRowComplete) {
+      setInputError('Already complete!')
+    } else {
+      setRow(rowIndex)
+      setIsPlayerGuess(isPlayerRow)
+    }
+
     e.target.elements.row.value = ''
   }
 
   const handleGuess = (e) => {
     e.preventDefault()
+    setShowCorrect(false)
     const guessInput = e.target.elements.guess.value.toUpperCase()
-
-    let answer,
-      progress,
-      sharedLetters,
-      sharedLettersKey,
-      progressKey,
-      guessedListKey
-    if (isPlayerGuess) {
-      answer = gameProgress.game.mysteryPlayers[row]
-      progress = gameProgress.mysteryPlayersProgress[row]
-      sharedLetters = gameProgress.mysteryPlayersSharedLetters[row]
-      sharedLettersKey = 'mysteryPlayersSharedLetters'
-      progressKey = 'mysteryPlayersProgress'
-      guessedListKey = 'playerGuessedList'
-    } else {
-      answer = gameProgress.game.connections[row]
-      progress = gameProgress.mysteryConnectionsProgress[row]
-      sharedLetters = gameProgress.mysteryConnectionsSharedLetters[row]
-      sharedLettersKey = 'mysteryConnectionsSharedLetters'
-      progressKey = 'mysteryConnectionsProgress'
-      guessedListKey = 'connectionsGuessedList'
-    }
-
-    const guessObj = new Guess(
-      answer,
-      progress,
-      sharedLetters,
-      guessInput,
-      isPlayerGuess
-    )
     if (guessInput === '') {
       setRow(undefined)
       setGuess('')
       return
     }
+
+    if (!isPlayerGuess && !isValidConnectionFormat(guessInput)) {
+      e.target.elements.guess.value = ''
+      return
+    }
+
+    const guessConfig = isPlayerGuess
+      ? {
+          answer: gameProgress.game.mysteryPlayers[row],
+          progress: gameProgress.mysteryPlayersProgress[row],
+          sharedLetters: gameProgress.mysteryPlayersSharedLetters[row],
+          sharedLettersKey: 'mysteryPlayersSharedLetters',
+          progressKey: 'mysteryPlayersProgress',
+          guessedListKey: 'playerGuessedList',
+        }
+      : {
+          answer: gameProgress.game.connections[row],
+          progress: gameProgress.mysteryConnectionsProgress[row],
+          sharedLetters: gameProgress.mysteryConnectionsSharedLetters[row],
+          sharedLettersKey: 'mysteryConnectionsSharedLetters',
+          progressKey: 'mysteryConnectionsProgress',
+          guessedListKey: 'connectionsGuessedList',
+        }
+
+    const guessObj = new Guess(
+      guessConfig.answer,
+      guessConfig.progress,
+      guessConfig.sharedLetters,
+      guessInput,
+      isPlayerGuess
+    )
+
     console.log(guessObj)
     let result = guessObj.handleGuess()
     console.log(result)
 
     setGameProgress((prev) => ({
       ...prev,
-      [sharedLettersKey]: prev[sharedLettersKey].map((part, i) =>
-        i === row ? result.sharedLetters : part
+      [guessConfig.sharedLettersKey]: prev[guessConfig.sharedLettersKey].map(
+        (part, i) => (i === row ? result.sharedLetters : part)
       ),
-      [progressKey]: prev[progressKey].map((part, i) =>
+      [guessConfig.progressKey]: prev[guessConfig.progressKey].map((part, i) =>
         i === row ? result.progress : part
       ),
       playersProgress: isPlayerGuess
@@ -111,11 +121,36 @@ export default function GameRunner() {
         : prev.mysteryConnectionsProgress.map((connection, i) =>
             i === row ? result.progress : connection
           ),
-      [guessedListKey]: prev[guessedListKey].map((guessed, i) =>
-        i === row ? !result.progress.includes('_') : guessed
+      [guessConfig.guessedListKey]: prev[guessConfig.guessedListKey].map(
+        (guessed, i) => (i === row ? !result.progress.includes('_') : guessed)
       ),
     }))
 
+    setGuess(getFormattedGuess(result))
+
+    if (!result.progress.includes('_')) {
+      setShowCorrect(true)
+    }
+
+    e.target.elements.guess.value = ''
+    return
+  }
+
+  const isValidConnectionFormat = (guessInput) => {
+    const lastFourDigits = guessInput.substring(
+      guessInput.length - 4,
+      guessInput.length
+    )
+    if (guessInput.length > 0 && !/^\d{4}$/.test(lastFourDigits)) {
+      setInputError('Must include year')
+      return false
+    } else {
+      setInputError('')
+      return true
+    }
+  }
+
+  const getFormattedGuess = (result) => {
     let guessBuild = result.alignedGuess.replace(/!/g, '').split(' ')
 
     if (isPlayerGuess) {
@@ -123,58 +158,16 @@ export default function GameRunner() {
       if (leftovers.length > 0) {
         guessBuild = guessBuild.concat(leftovers)
       }
-    } else if (result.leftovers.team.length > 0) {
+    } else if (result.leftovers.length > 0) {
       guessBuild = [
         ...guessBuild.slice(0, guessBuild.length - 1),
-        result.leftovers.team,
+        result.leftovers,
         guessBuild.slice(guessBuild.length - 1)[0],
       ]
     }
-
-    setGuess(guessBuild)
-
-    if (!result.progress.includes('_')) {
-      setSuccessMessage('Correct! Press enter to return to row selection.')
-    } else {
-      setSuccessMessage('')
-    }
-
-    e.target.elements.guess.value = ''
-    return
+    return guessBuild
   }
 
-  const getFormattedSharedLetters = (letters) => {
-    const parts = letters.map((part) => `[${part.join('')}]`)
-    return parts.map((part, i) => (
-      <span key={i} className='space-x-2'>
-        {part.split('').map((char, j) => (
-          <span key={j}>{char}</span>
-        ))}
-      </span>
-    ))
-  }
-
-  const getFormattedProgress = (progress) => {
-    const parts = (progress = progress.split(' '))
-    return parts.map((part, i) => (
-      <span key={i} className='space-x-2'>
-        {part.split('').map((char, j) => (
-          <span key={j}>{char}</span>
-        ))}
-      </span>
-    ))
-  }
-
-  const isCorrectGuess = () => {
-    const currentGuessResult = isPlayerGuess
-      ? gameProgress.mysteryPlayersProgress[row]
-      : gameProgress.mysteryConnectionsProgress[row]
-    const guessedList = isPlayerGuess
-      ? gameProgress.playerGuessedList
-      : gameProgress.connectionsGuessedList
-
-    return !currentGuessResult.includes('_') && guessedList[row]
-  }
   useEffect(() => {
     async function initializeGame() {
       const game = new Game(IS_RANDOM_GAME)
@@ -210,6 +203,15 @@ export default function GameRunner() {
     }
   }, [])
 
+  useEffect(() => {
+    if (
+      !gameProgress.playerGuessedList.includes(false) &&
+      !gameProgress.connectionsGuessedList.includes(false)
+    ) {
+      setGameComplete(true)
+    }
+  }, [gameProgress.playerGuessedList, gameProgress.connectionsGuessedList])
+
   return (
     <div>
       {gameProgress.playersProgress.length > 0 &&
@@ -221,111 +223,21 @@ export default function GameRunner() {
       ) : (
         <p>Loading...</p>
       )}
-      <div className='min-h-36 mx-48 content-end'>
+      <div className='min-h-36 mx-auto content-end'>
         {row === undefined ? (
-          <div>
-            <form onSubmit={handleRowSubmit}>
-              <label>
-                <div className='flex justify-center'>
-                  <span className='mr-4'>Enter a number 1-9:</span>
-                  <div className='flex flex-col relative'>
-                    {inputError && (
-                      <p className='absolute -top-5 pl-4 text-red-500 text-sm'>
-                        {inputError}
-                      </p>
-                    )}
-                    <input
-                      autoFocus
-                      type='number'
-                      className='border'
-                      name='row'
-                      autoComplete='off'
-                      onKeyDown={(e) =>
-                        ['e', 'E', '+', '-', '.'].includes(e.key) &&
-                        e.preventDefault()
-                      }
-                    />
-                  </div>
-                </div>
-              </label>
-            </form>
-          </div>
+          <RowInput handleRowSubmit={handleRowSubmit} inputError={inputError} />
         ) : (
-          <div>
-            <div className='flex flex-col'>
-              <div className='flex flex-row flex-1'>
-                <div className='flex-1 text-right mr-4'>Shared Letters: </div>
-                <div className='flex-1 space-x-8'>
-                  {isPlayerGuess
-                    ? getFormattedSharedLetters(
-                        gameProgress.mysteryPlayersSharedLetters[row]
-                      )
-                    : getFormattedSharedLetters(
-                        gameProgress.mysteryConnectionsSharedLetters[row]
-                      )}
-                </div>
-              </div>
-              <div className='flex flex-row flex-1 '>
-                <div className='flex-1 text-right mr-4'>Your Guess: </div>
-                <div className='flex-1 space-x-8'>
-                  {guess &&
-                    guess.map((part, i) => (
-                      <span key={i} className='space-x-2'>
-                        {part.split('').map((char, j) => (
-                          <span key={j} className=''>
-                            {char}
-                          </span>
-                        ))}
-                      </span>
-                    ))}
-                </div>
-              </div>
-              <div className='flex flex-row flex-1'>
-                <div className='flex-1 text-right mr-4'>Progress: </div>
-                <div className='flex-1 space-x-8'>
-                  {isPlayerGuess
-                    ? getFormattedProgress(
-                        gameProgress.mysteryPlayersProgress[row]
-                      )
-                    : getFormattedProgress(
-                        gameProgress.mysteryConnectionsProgress[row]
-                      )}
-                </div>
-              </div>
-              <div className='flex flex-row flex-1'>
-                <div className='flex-1 text-right mr-4'>
-                  <label>Enter your guess:</label>
-                </div>
-                <div className='flex-1'>
-                  <form onSubmit={handleGuess}>
-                    <div className='flex'>
-                      <div className='flex flex-col relative'>
-                        {inputError && (
-                          <p className='absolute -top-5 pl-4 text-red-500 text-sm'>
-                            {inputError}
-                          </p>
-                        )}
-                        <input
-                          autoFocus
-                          type='text'
-                          className='border'
-                          name='guess'
-                          autoComplete='off'
-                        />
-                      </div>
-                    </div>
-                  </form>
-                  <div className='h-6'>
-                    {guess && isCorrectGuess() && (
-                      <span className='absolute text-green-500 text-sm'>
-                        {successMessage}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <GuessInput
+            isPlayerGuess={isPlayerGuess}
+            gameProgress={gameProgress}
+            row={row}
+            guess={guess}
+            gridRow={gridRow}
+            handleGuess={handleGuess}
+            showCorrect={showCorrect}
+            inputError={inputError}
+            gameComplete={gameComplete}
+          />
         )}
       </div>
     </div>
