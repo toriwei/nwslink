@@ -25,6 +25,9 @@ export default function GameRunner() {
   const [guess, setGuess] = useState('')
   const [showCorrect, setShowCorrect] = useState(false)
   const [gameComplete, setGameComplete] = useState(undefined)
+  const [guessLog, setGuessLog] = useState(
+    Array.from({ length: 9 }).map(() => [])
+  )
 
   const handleRowSubmit = (e) => {
     e.preventDefault()
@@ -59,6 +62,8 @@ export default function GameRunner() {
   const handleGuess = (e) => {
     e.preventDefault()
     setShowCorrect(false)
+    setInputError('')
+
     const guessInput = e.target.elements.guess.value.toUpperCase()
     if (guessInput === '') {
       setRow(undefined)
@@ -165,6 +170,11 @@ export default function GameRunner() {
         guessBuild.slice(guessBuild.length - 1)[0],
       ]
     }
+    setGuessLog((prev) =>
+      prev.map((arr, index) =>
+        index === gridRow - 1 ? [guessBuild, ...arr] : arr
+      )
+    )
     return guessBuild
   }
 
@@ -237,6 +247,7 @@ export default function GameRunner() {
             showCorrect={showCorrect}
             inputError={inputError}
             gameComplete={gameComplete}
+            guessLog={guessLog[gridRow - 1]}
           />
         )}
       </div>
