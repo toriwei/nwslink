@@ -51,12 +51,10 @@ class Game {
             season: mysteryConnectionSeason,
           }
 
-          console.log(`initial mystery player: ${mysteryPlayer}`)
           // set mystery team
-          console.log(
-            `i: ${i} | col connection: ${this.mysteryConnection.team} ${this.mysteryConnection.season}`
+          this.connectionsSet.add(
+            `${this.mysteryConnection.team}-${this.mysteryConnection.season}`
           )
-          this.connectionsSet.add(this.mysteryConnection)
           this.connections.push(this.mysteryConnection)
         } else {
           // get random teammate of initial mystery player
@@ -176,10 +174,12 @@ class Game {
     while (true) {
       let playedFor = await this.getRandomPlayedFor(player, team)
       let randomSeason = await this.getRandomSeason(playedFor.seasons)
+
+      let playedForStr = `${playedFor.team}-${randomSeason}`
       let playedForObj = { team: playedFor.team, season: randomSeason }
 
-      if (!this.connectionsSet.has(playedForObj)) {
-        this.connectionsSet.add(playedForObj)
+      if (!this.connectionsSet.has(playedForStr)) {
+        this.connectionsSet.add(playedForStr)
         return playedForObj
       }
     }
