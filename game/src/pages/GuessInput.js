@@ -41,22 +41,28 @@ export default function GuessInput({
     <div>
       <div className='flex flex-col'>
         <div className='flex flex-row flex-1'>
-          <div className='flex-1 text-right mr-4'>Shared Letters:</div>
+          <div className='flex-1 text-right'>
+            <span className='pr-4'>Shared Letters:</span>
+          </div>
           <div className='flex-1'>{getFormattedSharedLetters()}</div>
         </div>
         <div className='flex flex-row flex-1 '>
-          <div className='flex-1 text-right mr-4'>Your Guess: </div>
+          <div className='flex-1 text-right'>
+            <span className='pr-4'>Your Guess:</span>
+          </div>
           <div className='flex-1'>
             {guess && <SpacedLetters parts={guess} />}
           </div>
         </div>
         <div className='flex flex-row flex-1'>
-          <div className='flex-1 text-right mr-4'>Progress:</div>
+          <div className='flex-1 text-right'>
+            <span className='pr-4'>Progress:</span>
+          </div>
           <div className='flex-1'>{getFormattedProgress()}</div>
         </div>
         <div className='flex flex-row flex-1 mt-2'>
-          <div className='flex-1 text-right mr-4'>
-            <label>
+          <div className='flex-1 text-right'>
+            <label className='pr-4'>
               Enter your guess <span>[{gridRow}]</span>:
             </label>
           </div>
@@ -67,7 +73,7 @@ export default function GuessInput({
                   <input
                     autoFocus
                     type='text'
-                    className='border'
+                    className='border w-96'
                     name='guess'
                     autoComplete='off'
                     onKeyDown={(e) => {
@@ -98,10 +104,12 @@ export default function GuessInput({
           </div>
         </div>
       </div>
-      <div className='absolute flex w-full mt-4'>
-        <div className='flex-1 text-right mr-4'>Guess Log:</div>
-        <div className='flex-1 flex flex-col max-h-16 overflow-y-scroll'>
-          <div className='max-w-96 overflow-x-scroll border'>
+      <div className='absolute flex flex-row mt-8 w-full'>
+        <div className='flex-1 text-right'>
+          <span className='pr-4'>Guess Log:</span>
+        </div>
+        <div className='flex-1 flex flex-col'>
+          <div className='max-w-96 h-16 max-h-36 overflow-scroll border resize-y'>
             {guessLog.length > 0 && getFormattedGuessLog(guessLog)}
           </div>
         </div>

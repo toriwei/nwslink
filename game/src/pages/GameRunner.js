@@ -28,6 +28,7 @@ export default function GameRunner() {
   const [guessLog, setGuessLog] = useState(
     Array.from({ length: 9 }).map(() => [])
   )
+  const [guessCount, setGuessCount] = useState(0)
 
   const handleRowSubmit = (e) => {
     e.preventDefault()
@@ -132,6 +133,7 @@ export default function GameRunner() {
     }))
 
     setGuess(getFormattedGuess(result))
+    setGuessCount((prev) => prev + 1)
 
     if (!result.progress.includes('_')) {
       setShowCorrect(true)
@@ -250,6 +252,12 @@ export default function GameRunner() {
             guessLog={guessLog[gridRow - 1]}
           />
         )}
+      </div>
+      <div className='flex flex-row mt-48'>
+        <div className='flex-1 text-right'>
+          <span className='pr-4'>Guesses:</span>
+        </div>
+        <div className='flex-1'>{guessCount}</div>
       </div>
     </div>
   )

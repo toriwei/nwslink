@@ -3,17 +3,19 @@ export default function Grid({ players, connections }) {
     <div className='pt-4'>
       <table className='mx-auto'>
         <tbody className=''>
-          <tr key={`row-label-top`} className='row-label-top'>
-            <td colSpan={3} />
-            <td className='font-bold px-4'>MYSTERY PLAYERS</td>
-            <td className='font-bold px-4'>ROW LINKS</td>
+          <tr key={`row-label-top`} className='row-label-top '>
+            <td colSpan={3} className='w-1/2' />
+            <td className='font-bold px-4 w-1/4'>MYSTERY PLAYERS</td>
+            <td className='font-bold px-4 w-1/4'>ROW LINKS</td>
           </tr>
           {players.map((row, i) => (
             <tr key={`game-row-${i}`} className={`game-row-${i} border`}>
               {row.map((player, j) => (
                 <td
                   key={`player-${i}-${j}`}
-                  className={`player-${i}-${j} border px-4`}
+                  className={`player-${i}-${j} border px-4 ${
+                    j < 3 ? 'w-1/6' : 'w-1/4'
+                  }`}
                 >
                   <span
                     key={`player-span-${i}-${j}`}
@@ -46,7 +48,7 @@ export default function Grid({ players, connections }) {
                   </span>
                 </td>
               ))}
-              <td className='border px-4'>
+              <td className='border px-4 w-1/4'>
                 <span key={`link-${i}`} className={`link-${i} space-x-8`}>
                   <span
                     key={`label-link-${i}`}
@@ -67,12 +69,12 @@ export default function Grid({ players, connections }) {
             </tr>
           ))}
           <tr key={`row-label-mid`} className={`row-label-mid`}>
-            <td colSpan={3} />
-            <td className='font-bold pt-4 px-4'>COLUMN LINK</td>
+            <td colSpan={3} className='w-1/2' />
+            <td className='font-bold pt-4 px-4 w-1/4'>COLUMN LINK</td>
           </tr>
           <tr key={`row-mystery-link`} className='row-mystery-link'>
-            <td colSpan={3} />
-            <td className='border px-4'>
+            <td colSpan={3} className='w-1/2' />
+            <td className='border px-4 w-1/4'>
               <span key={`col-link`} className='space-x-8'>
                 <span key={`col-link-label`} className='-mr-4'>
                   {'[9]'}
