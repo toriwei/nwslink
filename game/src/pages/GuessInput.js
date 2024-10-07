@@ -1,6 +1,6 @@
 import InputMessage from './InputMessage'
 import SpacedLetters from './SpacedLetters'
-
+// to do: divs to line up guess team name and progress team name (and same w/ season)
 export default function GuessInput({
   isPlayerGuess,
   gameProgress,
@@ -62,7 +62,7 @@ export default function GuessInput({
         </div>
         <div className='flex flex-row flex-1 mt-2'>
           <div className='flex-1 text-right'>
-            <label className='pr-4'>
+            <label htmlFor='guess' className='pr-4'>
               Enter your guess <span>[{gridRow}]</span>:
             </label>
           </div>
@@ -75,6 +75,7 @@ export default function GuessInput({
                     type='text'
                     className='border w-96'
                     name='guess'
+                    id='guess'
                     autoComplete='off'
                     onKeyDown={(e) => {
                       if (showCorrect && e.keyCode !== 13) {
@@ -88,13 +89,13 @@ export default function GuessInput({
                   )}
                   {gameComplete && (
                     <InputMessage
-                      message={'Correct! You completed the game!'}
+                      message={'Great job! You completed the game!'}
                       isError={false}
                     />
                   )}
                   {guess && showCorrect && !gameComplete && (
                     <InputMessage
-                      message={'Correct! Press enter to return.'}
+                      message={'Complete! Press enter to return.'}
                       isError={false}
                     />
                   )}

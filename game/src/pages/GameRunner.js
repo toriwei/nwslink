@@ -5,7 +5,7 @@ import Guess from './Guess'
 import RowInput from './RowInput'
 import GuessInput from './GuessInput'
 
-export default function GameRunner() {
+export default function GameRunner({ updateStats }) {
   const IS_RANDOM_GAME = false
   const [gameProgress, setGameProgress] = useState({
     game: null,
@@ -149,7 +149,7 @@ export default function GameRunner() {
       guessInput.length
     )
     if (guessInput.length > 0 && !/^\d{4}$/.test(lastFourDigits)) {
-      setInputError('Must include year')
+      setInputError('Must include 4-digit year')
       return false
     } else {
       setInputError('')
@@ -221,6 +221,7 @@ export default function GameRunner() {
       !gameProgress.connectionsGuessedList.includes(false)
     ) {
       setGameComplete(true)
+      updateStats(guessCount)
     }
   }, [gameProgress.playerGuessedList, gameProgress.connectionsGuessedList])
 
@@ -233,9 +234,11 @@ export default function GameRunner() {
           connections={gameProgress.mysteryConnectionsProgress}
         />
       ) : (
-        <p>Loading...</p>
+        <div className='w-full text-center pt-4'>
+          <p>Building Game... Creating Links... Warming Up...</p>
+        </div>
       )}
-      <div className='min-h-36 mx-auto content-end'>
+      <div className='min-h-36 content-end'>
         {row === undefined ? (
           <RowInput handleRowSubmit={handleRowSubmit} inputError={inputError} />
         ) : (

@@ -178,7 +178,10 @@ class Game {
       let playedForStr = `${playedFor.team}-${randomSeason}`
       let playedForObj = { team: playedFor.team, season: randomSeason }
 
-      if (!this.connectionsSet.has(playedForStr)) {
+      if (
+        !this.connectionsSet.has(playedForStr) &&
+        playedFor.team !== this.mysteryConnection.team
+      ) {
         this.connectionsSet.add(playedForStr)
         return playedForObj
       }
