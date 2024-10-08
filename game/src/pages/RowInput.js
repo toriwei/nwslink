@@ -4,7 +4,7 @@ export default function RowInput({ handleRowSubmit, inputError }) {
     <form onSubmit={handleRowSubmit}>
       <div className='flex justify-center'>
         <label htmlFor='row' className='flex-1 text-right'>
-          <span className='pr-4'>Enter a number 1-9:</span>
+          <span className='pr-4'>Select a tile [1]-[9]:</span>
         </label>
         <div className='flex flex-1 flex-col relative'>
           <input

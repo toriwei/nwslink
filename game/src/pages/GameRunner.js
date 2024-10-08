@@ -5,7 +5,7 @@ import Guess from './Guess'
 import RowInput from './RowInput'
 import GuessInput from './GuessInput'
 
-export default function GameRunner({ updateStats }) {
+export default function GameRunner({ updateStats, openStatsModal }) {
   const IS_RANDOM_GAME = false
   const [gameProgress, setGameProgress] = useState({
     game: null,
@@ -222,6 +222,7 @@ export default function GameRunner({ updateStats }) {
     ) {
       setGameComplete(true)
       updateStats(guessCount)
+      openStatsModal(true)
     }
   }, [gameProgress.playerGuessedList, gameProgress.connectionsGuessedList])
 

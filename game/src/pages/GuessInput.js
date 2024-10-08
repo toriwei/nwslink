@@ -39,79 +39,83 @@ export default function GuessInput({
 
   return (
     <div>
-      <div className='flex flex-col'>
-        <div className='flex flex-row flex-1'>
-          <div className='flex-1 text-right'>
-            <span className='pr-4'>Shared Letters:</span>
+      <div>
+        <div className='flex flex-col'>
+          <div className='flex flex-row flex-1'>
+            <div className='flex-1 text-right'>
+              <span className='pr-4'>Shared Letters:</span>
+            </div>
+            <div className='flex-1'>{getFormattedSharedLetters()}</div>
           </div>
-          <div className='flex-1'>{getFormattedSharedLetters()}</div>
-        </div>
-        <div className='flex flex-row flex-1 '>
-          <div className='flex-1 text-right'>
-            <span className='pr-4'>Your Guess:</span>
+          <div className='flex flex-row flex-1 '>
+            <div className='flex-1 text-right'>
+              <span className='pr-4'>Your Guess:</span>
+            </div>
+            <div className='flex-1'>
+              {guess && <SpacedLetters parts={guess} />}
+            </div>
           </div>
-          <div className='flex-1'>
-            {guess && <SpacedLetters parts={guess} />}
+          <div className='flex flex-row flex-1'>
+            <div className='flex-1 text-right'>
+              <span className='pr-4'>Progress:</span>
+            </div>
+            <div className='flex-1'>{getFormattedProgress()}</div>
           </div>
-        </div>
-        <div className='flex flex-row flex-1'>
-          <div className='flex-1 text-right'>
-            <span className='pr-4'>Progress:</span>
-          </div>
-          <div className='flex-1'>{getFormattedProgress()}</div>
-        </div>
-        <div className='flex flex-row flex-1 mt-2'>
-          <div className='flex-1 text-right'>
-            <label htmlFor='guess' className='pr-4'>
-              Enter your guess <span>[{gridRow}]</span>:
-            </label>
-          </div>
-          <div className='flex-1'>
-            <form onSubmit={handleGuess}>
-              <div className='flex'>
-                <div className='flex flex-col relative'>
-                  <input
-                    autoFocus
-                    type='text'
-                    className='border w-96'
-                    name='guess'
-                    id='guess'
-                    autoComplete='off'
-                    onKeyDown={(e) => {
-                      if (showCorrect && e.keyCode !== 13) {
-                        e.preventDefault()
-                      }
-                    }}
-                    disabled={gameComplete}
-                  />
-                  {inputError && (
-                    <InputMessage message={inputError} isError={true} />
-                  )}
-                  {gameComplete && (
-                    <InputMessage
-                      message={'Great job! You completed the game!'}
-                      isError={false}
+          <div className='flex flex-row flex-1 mt-2'>
+            <div className='flex-1 text-right'>
+              <label htmlFor='guess' className='pr-4'>
+                Enter your guess <span>[{gridRow}]</span>:
+              </label>
+            </div>
+            <div className='flex-1'>
+              <form onSubmit={handleGuess}>
+                <div className='flex'>
+                  <div className='flex flex-col relative'>
+                    <input
+                      autoFocus
+                      type='text'
+                      className='border w-96'
+                      name='guess'
+                      id='guess'
+                      autoComplete='off'
+                      onKeyDown={(e) => {
+                        if (showCorrect && e.keyCode !== 13) {
+                          e.preventDefault()
+                        }
+                      }}
+                      disabled={gameComplete}
                     />
-                  )}
-                  {guess && showCorrect && !gameComplete && (
-                    <InputMessage
-                      message={'Complete! Press enter to return.'}
-                      isError={false}
-                    />
-                  )}
+                    {inputError && (
+                      <InputMessage message={inputError} isError={true} />
+                    )}
+                    {gameComplete && (
+                      <InputMessage
+                        message={'Great job! You completed the game!'}
+                        isError={false}
+                      />
+                    )}
+                    {guess && showCorrect && !gameComplete && (
+                      <InputMessage
+                        message={'Complete! Press enter to return.'}
+                        isError={false}
+                      />
+                    )}
+                  </div>
                 </div>
-              </div>
-            </form>
+              </form>
+            </div>
           </div>
         </div>
       </div>
-      <div className='absolute flex flex-row mt-8 w-full'>
-        <div className='flex-1 text-right'>
-          <span className='pr-4'>Guess Log:</span>
-        </div>
-        <div className='flex-1 flex flex-col'>
-          <div className='max-w-96 h-16 max-h-36 overflow-scroll border resize-y'>
-            {guessLog.length > 0 && getFormattedGuessLog(guessLog)}
+      <div className='flex w-full relative'>
+        <div className='absolute left-0 right-0 flex flex-row mt-8'>
+          <div className='flex-1 text-right'>
+            <span className='pr-4'>Guess Log:</span>
+          </div>
+          <div className='flex-1 flex flex-col w-full'>
+            <div className='max-w-96 h-16 max-h-36 overflow-scroll border resize-y'>
+              {guessLog.length > 0 && getFormattedGuessLog(guessLog)}
+            </div>
           </div>
         </div>
       </div>

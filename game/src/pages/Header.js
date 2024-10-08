@@ -1,4 +1,4 @@
-export default function Header({ openStatsModal }) {
+export default function Header({ openStatsModal, openInfoModal }) {
   return (
     <div className='header flex flex-row items-end justify-between max-h-16'>
       <div className='flex-1'></div>
@@ -12,7 +12,10 @@ export default function Header({ openStatsModal }) {
         >
           STATS
         </button>
-        <button className='bg-[#EE1B4B] hover:bg-[#CB333B] text-white px-4 py-2 text-sm rounded'>
+        <button
+          className='bg-[#EE1B4B] hover:bg-[#CB333B] text-white px-4 py-2 text-sm rounded'
+          onClick={openInfoModal}
+        >
           INFO
         </button>
       </div>
