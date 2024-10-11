@@ -13,6 +13,8 @@ export default function RowInput({ handleRowSubmit, inputError }) {
             className='border w-1/12'
             name='row'
             id='row'
+            min='1'
+            max='9'
             autoComplete='off'
             onKeyDown={(e) =>
               ['e', 'E', '+', '-', '.'].includes(e.key) && e.preventDefault()

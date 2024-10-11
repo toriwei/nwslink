@@ -113,7 +113,7 @@ export default function GuessInput({
             <span className='pr-4'>Guess Log:</span>
           </div>
           <div className='flex-1 flex flex-col w-full'>
-            <div className='max-w-96 h-16 max-h-36 overflow-scroll border resize-y'>
+            <div className='max-w-96 h-16 max-h-36 overflow-auto border resize-y'>
               {guessLog.length > 0 && getFormattedGuessLog(guessLog)}
             </div>
           </div>

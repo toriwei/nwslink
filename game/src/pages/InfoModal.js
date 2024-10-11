@@ -1,7 +1,7 @@
 export default function InfoModal({ closeInfoModal }) {
   return (
     <div className='fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-75 text-xs'>
-      <div className='relative flex flex-col w-1/2 h-3/4 p-4 pb-12 bg-white rounded-lg text-center overflow-y-scroll'>
+      <div className='relative flex flex-col w-1/2 h-3/4 p-4 pb-12 bg-white rounded-lg text-center'>
         <button className='text-right' onClick={closeInfoModal}>
           <span className='bg-[#EE1B4B] hover:bg-[#CB333B] text-white text-base rounded px-2'>
             &times;
@@ -10,7 +10,7 @@ export default function InfoModal({ closeInfoModal }) {
         <div className='modal-header text-center mb-2'>
           <h2 className='text-3xl font-bold '>INFO</h2>
         </div>
-        <div className='modal-content overflow-x-scroll flex flex-col w-full px-8 pb-4 text-left space-y-6'>
+        <div className='modal-content overflow-auto flex flex-col w-full px-8 pb-4 text-left space-y-6'>
           <div>
             <h3 className='text-xl font-bold'>HOW TO PLAY</h3>
             <div className='space-y-4'>
@@ -32,7 +32,7 @@ export default function InfoModal({ closeInfoModal }) {
             </div>
           </div>
           <div>
-            <h3 className='text-xl font-bold'>GUESS FORMAT</h3>
+            <h3 className='text-xl font-bold'>FORMAT</h3>
             <div className='space-y-4'>
               <ul className='list-disc pl-4 space-y-2'>
                 <li>
@@ -40,6 +40,10 @@ export default function InfoModal({ closeInfoModal }) {
                   season cap
                 </li>
                 <li>LINK: club name and season (formatted as YYYY)</li>
+                <li>
+                  Shared Letters: letters in the answer but incorrect spot,
+                  separated by first/last name or club name/season.
+                </li>
                 <li className='list-none'>
                   Note: Data synced up to August 12, 2024. Excludes 2021 data as
                   that season was replaced by the Challenge Cup.
@@ -112,14 +116,14 @@ export default function InfoModal({ closeInfoModal }) {
           </div>
           <div>
             <h3 className='text-xl font-bold'>BUILT BY</h3>
-            Hi! My name is{' '}
             <a
               className='text-[#EE1B4B] hover:text-[#CB333B]'
               href='https://toriwei.github.io/'
+              target='_blank'
             >
               Tori
             </a>
-            , and I made this game.
+            , a software engineer who likes soccer, data, and design.
           </div>
         </div>
       </div>

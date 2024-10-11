@@ -29,6 +29,12 @@ export default function GameRunner({ updateStats, openStatsModal }) {
     Array.from({ length: 9 }).map(() => [])
   )
   const [guessCount, setGuessCount] = useState(0)
+  const [playerGuessCount, setPlayerGuessCount] = useState(0)
+  const [linkGuessCount, setLinkGuessCount] = useState(0)
+
+  const increasePlayerGuessCount = () =>
+    setPlayerGuessCount(playerGuessCount + 1)
+  const increaseLinkGuessCount = () => setLinkGuessCount(linkGuessCount + 1)
 
   const handleRowSubmit = (e) => {
     e.preventDefault()
@@ -135,6 +141,12 @@ export default function GameRunner({ updateStats, openStatsModal }) {
     setGuess(getFormattedGuess(result))
     setGuessCount((prev) => prev + 1)
 
+    if (isPlayerGuess) {
+      increasePlayerGuessCount()
+    } else {
+      increaseLinkGuessCount()
+    }
+
     if (!result.progress.includes('_')) {
       setShowCorrect(true)
     }
@@ -221,7 +233,7 @@ export default function GameRunner({ updateStats, openStatsModal }) {
       !gameProgress.connectionsGuessedList.includes(false)
     ) {
       setGameComplete(true)
-      updateStats(guessCount)
+      updateStats(guessCount, playerGuessCount, linkGuessCount)
       openStatsModal(true)
     }
   }, [gameProgress.playerGuessedList, gameProgress.connectionsGuessedList])

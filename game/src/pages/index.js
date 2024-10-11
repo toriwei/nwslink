@@ -12,8 +12,12 @@ export default function Home() {
     bestScore: undefined,
     gamesCompleted: 0,
     currentScore: undefined,
-    cumulativeScore: undefined,
+    totalScore: undefined,
     averageScore: undefined,
+    totalPlayerGuesses: undefined,
+    totalLinkGuesses: undefined,
+    averagePlayerGuesses: undefined,
+    averageLinkGuesses: undefined,
   })
 
   const openStatsModal = () => setShowStatsModal(true)
@@ -22,25 +26,32 @@ export default function Home() {
   const openInfoModal = () => setShowInfoModal(true)
   const closeInfoModal = () => setShowInfoModal(false)
 
-  const updateStats = (newScore) => {
+  const updateStats = (newScore, newPlayerGuesses, newLinkGuesses) => {
     console.log(newScore)
     setShowGameCompleteMessage(true)
     setStats((prev) => {
-      const bestScore =
-        typeof prev.bestScore === 'number' ? prev.bestScore : Number(newScore)
-      const gamesCompleted =
-        typeof prev.gamesCompleted === 'number' ? prev.gamesCompleted : 0
-      const cumulativeScore =
-        typeof prev.cumulativeScore === 'number' ? prev.cumulativeScore : 0
+      const bestScore = prev.bestScore ?? Number(newScore)
+      const gamesCompleted = prev.gamesCompleted ?? 0
+      const totalScore = prev.totalScore ?? 0
       const currentScore = Number(newScore)
+      const totalPlayerGuesses = prev.totalPlayerGuesses ?? 0
+      const totalLinkGuesses = prev.totalLinkGuesses ?? 0
 
       const updatedStats = {
-        bestScore: newScore < bestScore ? newScore : bestScore,
+        bestScore: Math.min(newScore, bestScore),
         gamesCompleted: gamesCompleted + 1,
-        cumulativeScore: cumulativeScore + newScore,
+        totalScore: totalScore + newScore,
         currentScore: currentScore,
-        averageScore: Math.ceil(
-          (cumulativeScore + newScore) / (gamesCompleted + 1)
+        averageScore: Math.ceil((totalScore + newScore) / (gamesCompleted + 1)),
+        currentPlayerGuesses: newPlayerGuesses,
+        totalPlayerGuesses: totalPlayerGuesses + newPlayerGuesses,
+        averagePlayerGuesses: Math.ceil(
+          (totalPlayerGuesses + newPlayerGuesses) / (gamesCompleted + 1)
+        ),
+        currentLinkGuesses: newLinkGuesses,
+        totalLinkGuesses: totalLinkGuesses + newLinkGuesses,
+        averageLinkGuesses: Math.ceil(
+          (totalLinkGuesses + newLinkGuesses) / (gamesCompleted + 1)
         ),
       }
 
