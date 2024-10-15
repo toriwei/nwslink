@@ -40,7 +40,7 @@ export default function GuessInput({
   return (
     <div>
       <div>
-        <div className='flex flex-col'>
+        <div className='flex flex-col space-x-2'>
           <div className='flex flex-row flex-1'>
             <div className='flex-1 text-right'>
               <span className='pr-4'>Shared Letters:</span>
@@ -74,7 +74,7 @@ export default function GuessInput({
                     <input
                       autoFocus
                       type='text'
-                      className='border w-96'
+                      className='border border-black rounded-md w-96'
                       name='guess'
                       id='guess'
                       autoComplete='off'
@@ -107,13 +107,13 @@ export default function GuessInput({
           </div>
         </div>
       </div>
-      <div className='flex w-full relative'>
-        <div className='absolute left-0 right-0 flex flex-row mt-8'>
+      <div className='flex w-full relative '>
+        <div className='absolute left-0 right-0 flex flex-row mt-8 space-x-2'>
           <div className='flex-1 text-right'>
             <span className='pr-4'>Guess Log:</span>
           </div>
           <div className='flex-1 flex flex-col w-full'>
-            <div className='max-w-96 h-16 max-h-36 overflow-auto border resize-y'>
+            <div className='max-w-96 h-16 max-h-36 overflow-auto border resize-y border border-black rounded-md'>
               {guessLog.length > 0 && getFormattedGuessLog(guessLog)}
             </div>
           </div>

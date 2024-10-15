@@ -7,13 +7,13 @@ export default function Header({ openStatsModal, openInfoModal }) {
       </h1>
       <div className='flex-1 text-right space-x-4'>
         <button
-          className='bg-[#0036FF] hover:bg-[#001E60] text-white px-4 py-2 text-sm rounded'
+          className='bg-[#0036FF] hover:bg-[#001E60] text-white px-4 py-2 text-sm rounded font-bold'
           onClick={openStatsModal}
         >
           STATS
         </button>
         <button
-          className='bg-[#EE1B4B] hover:bg-[#CB333B] text-white px-4 py-2 text-sm rounded'
+          className='bg-[#EE1B4B] hover:bg-[#CB333B] text-white px-4 py-2 text-sm rounded font-bold'
           onClick={openInfoModal}
         >
           INFO

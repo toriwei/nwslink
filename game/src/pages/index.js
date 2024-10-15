@@ -3,7 +3,12 @@ import Header from './Header'
 import StatsModal from './StatsModal'
 import InfoModal from './InfoModal'
 import GameRunner from './GameRunner'
+import { IBM_Plex_Mono } from 'next/font/google'
 
+const ibm_Plex_Mono = IBM_Plex_Mono({
+  weight: '400',
+  subsets: ['latin'],
+})
 export default function Home() {
   const [showStatsModal, setShowStatsModal] = useState(false)
   const [showInfoModal, setShowInfoModal] = useState(false)
@@ -68,7 +73,7 @@ export default function Home() {
   }, [])
 
   return (
-    <div className='font-mono w-screen px-12 mt-8'>
+    <div className={`${ibm_Plex_Mono.className} w-screen h-screen px-12 pt-8`}>
       <Header openStatsModal={openStatsModal} openInfoModal={openInfoModal} />
       {showStatsModal && (
         <StatsModal

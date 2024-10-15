@@ -4,6 +4,7 @@ import Grid from './Grid'
 import Guess from './Guess'
 import RowInput from './RowInput'
 import GuessInput from './GuessInput'
+import axios from 'axios'
 
 export default function GameRunner({ updateStats, openStatsModal }) {
   const IS_RANDOM_GAME = false
@@ -66,21 +67,36 @@ export default function GameRunner({ updateStats, openStatsModal }) {
     e.target.elements.row.value = ''
   }
 
-  const handleGuess = (e) => {
+  const handleGuess = async (e) => {
     e.preventDefault()
     setShowCorrect(false)
     setInputError('')
 
-    const guessInput = e.target.elements.guess.value.toUpperCase()
+    const guessInput = e.target.elements.guess.value.trim().toUpperCase()
     if (guessInput === '') {
       setRow(undefined)
       setGuess('')
       return
     }
 
-    if (!isPlayerGuess && !isValidConnectionFormat(guessInput)) {
-      e.target.elements.guess.value = ''
-      return
+    if (isPlayerGuess) {
+      if (!(await isValidPlayer(guessInput))) {
+        e.target.elements.guess.value = ''
+        setInputError('Not a valid NWSL player.')
+        return
+      }
+    }
+
+    if (!isPlayerGuess) {
+      if (!isValidConnectionFormat(guessInput)) {
+        e.target.elements.guess.value = ''
+        return
+      }
+
+      if (!(await checkValidTeamName(guessInput))) {
+        e.target.elements.guess.value = ''
+        return
+      }
     }
 
     const guessConfig = isPlayerGuess
@@ -156,17 +172,29 @@ export default function GameRunner({ updateStats, openStatsModal }) {
   }
 
   const isValidConnectionFormat = (guessInput) => {
-    const lastFourDigits = guessInput.substring(
-      guessInput.length - 4,
-      guessInput.length
-    )
+    const lastFourDigits = guessInput
+      .substring(guessInput.length - 5, guessInput.length)
+      .trim()
     if (guessInput.length > 0 && !/^\d{4}$/.test(lastFourDigits)) {
       setInputError('Must include 4-digit year')
       return false
-    } else {
-      setInputError('')
-      return true
     }
+
+    const season = parseInt(lastFourDigits, 10)
+    if (season < 2013 || season > 2024 || season === 2020) {
+      setInputError('Season must be between 2013 and 2024, excluding 2020')
+      return false
+    }
+    return true
+  }
+
+  const checkValidTeamName = async (guessInput) => {
+    const team = guessInput.substring(0, guessInput.length - 4).trim()
+    const isValid = await isValidTeamName(team)
+    if (!isValid) {
+      setInputError('Must be a valid team name.')
+    }
+    return isValid
   }
 
   const getFormattedGuess = (result) => {
@@ -190,6 +218,38 @@ export default function GameRunner({ updateStats, openStatsModal }) {
       )
     )
     return guessBuild
+  }
+
+  // API CALL METHODS
+  const isValidPlayer = async (name) => {
+    try {
+      const res = await axios.get('http://127.0.0.1:5000/is_valid_player', {
+        params: {
+          name: name,
+        },
+      })
+      console.log(res.data)
+      return res.data.is_valid_player
+    } catch (e) {
+      console.log(e)
+      throw new Error('Failed to search player name')
+    }
+  }
+
+  const isValidTeamName = async (team) => {
+    console.log(team)
+    try {
+      const res = await axios.get('http://127.0.0.1:5000/is_valid_team_name', {
+        params: {
+          team: team,
+        },
+      })
+      console.log(res.data)
+      return res.data.is_valid_team_name
+    } catch (e) {
+      console.log(e)
+      throw new Error('Failed to search player name')
+    }
   }
 
   useEffect(() => {
@@ -239,7 +299,7 @@ export default function GameRunner({ updateStats, openStatsModal }) {
   }, [gameProgress.playerGuessedList, gameProgress.connectionsGuessedList])
 
   return (
-    <div>
+    <div className='h-5/6'>
       {gameProgress.playersProgress.length > 0 &&
       gameProgress.mysteryConnectionsProgress.length > 0 ? (
         <Grid

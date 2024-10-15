@@ -7,7 +7,7 @@ app = Flask(__name__)
 CORS(app)
 
 
-@app.route('/random_player', methods=['GET', 'OPTIONS'])
+@app.route('/random_player', methods=['GET'])
 def get_random_player():
     app.logger.info('Random player endpoint accessed')
     player = driver.get_random_player()
@@ -45,17 +45,17 @@ def get_random_teammate():
     else:
         return jsonify({"error": "Could not get random teammate"}), 404
 
-@app.route('/is_valid_player/<name>', methods=['GET'])
-def is_valid_player(name):
+@app.route('/is_valid_player', methods=['GET'])
+def is_valid_player():
+    name = request.args.get('name')
     is_valid_player = driver.is_valid_player(name)
     return jsonify({"is_valid_player": bool(is_valid_player)})
 
-@app.route('/is_valid_team_name/<team>', methods=['GET'])
-def is_valid_team_name(team):
+@app.route('/is_valid_team_name', methods=['GET'])
+def is_valid_team_name():
+    team = request.args.get('team')
     is_valid_team_name = driver.is_valid_team_name(team)
-    return jsonify({"is_valid": bool(is_valid_team_name)})
-
-
+    return jsonify({"is_valid_team_name": bool(is_valid_team_name)})
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)

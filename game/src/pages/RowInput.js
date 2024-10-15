@@ -2,15 +2,15 @@ import InputMessage from './InputMessage'
 export default function RowInput({ handleRowSubmit, inputError }) {
   return (
     <form onSubmit={handleRowSubmit}>
-      <div className='flex justify-center'>
+      <div className='flex justify-center space-x-2'>
         <label htmlFor='row' className='flex-1 text-right'>
-          <span className='pr-4'>Select a tile [1]-[9]:</span>
+          <span className='pr-2'>Select a tile [1]-[9]:</span>
         </label>
         <div className='flex flex-1 flex-col relative'>
           <input
             autoFocus
             type='number'
-            className='border w-1/12'
+            className='border border-black rounded-md w-1/12'
             name='row'
             id='row'
             min='1'

@@ -32,13 +32,13 @@ export default function StatsModal({
                   <span className='font-bold text-3xl'>
                     {stats.currentPlayerGuesses}
                   </span>
-                  <span className='text-xs'>PLAYER GUESSES</span>
+                  <span className='text-sm'>PLAYER GUESSES</span>
                 </div>
                 <div className='flex flex-1 flex-col'>
                   <span className='font-bold text-3xl'>
                     {stats.currentLinkGuesses}
                   </span>
-                  <span className='text-xs'>LINK GUESSES</span>
+                  <span className='text-sm'>LINK GUESSES</span>
                 </div>
                 <div className='flex flex-1'></div>
               </div>
@@ -52,19 +52,19 @@ export default function StatsModal({
                   <span className='font-bold text-3xl'>
                     {stats.gamesCompleted}
                   </span>
-                  <span className='text-xs'>GAMES PLAYED</span>
+                  <span className='text-sm'>GAMES PLAYED</span>
                 </div>
                 <div className='flex flex-1 flex-col'>
                   <span className='font-bold text-3xl'>
                     {stats.bestScore || '-'}
                   </span>
-                  <span className='text-xs'>BEST SCORE</span>
+                  <span className='text-sm'>BEST SCORE</span>
                 </div>
                 <div className='flex flex-1 flex-col'>
                   <span className='font-bold text-3xl'>
                     {Math.ceil(stats.averageScore) || '-'}
                   </span>
-                  <span className='text-xs'>AVERAGE SCORE</span>
+                  <span className='text-sm'>AVERAGE SCORE</span>
                 </div>
               </div>
               <div className='flex space-x-4'>
@@ -72,13 +72,13 @@ export default function StatsModal({
                   <span className='font-bold text-3xl'>
                     {stats.averagePlayerGuesses || '-'}
                   </span>
-                  <span className='text-xs'>AVG. PLAYER GUESSES</span>
+                  <span className='text-sm'>AVG. PLAYER GUESSES</span>
                 </div>
                 <div className='flex flex-1 flex-col'>
                   <span className='font-bold text-3xl'>
                     {stats.averageLinkGuesses || '-'}
                   </span>
-                  <span className='text-xs'>AVG. LINK GUESSES</span>
+                  <span className='text-sm'>AVG. LINK GUESSES</span>
                 </div>
                 <div className='flex flex-1'></div>
               </div>

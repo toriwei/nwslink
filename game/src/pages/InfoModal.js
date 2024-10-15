@@ -1,6 +1,6 @@
 export default function InfoModal({ closeInfoModal }) {
   return (
-    <div className='fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-75 text-xs'>
+    <div className='fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-75 text-sm'>
       <div className='relative flex flex-col w-1/2 h-3/4 p-4 pb-12 bg-white rounded-lg text-center'>
         <button className='text-right' onClick={closeInfoModal}>
           <span className='bg-[#EE1B4B] hover:bg-[#CB333B] text-white text-base rounded px-2'>
@@ -25,7 +25,7 @@ export default function InfoModal({ closeInfoModal }) {
                   LINK [9]
                 </li>
                 <li>
-                  Each MYSTERY PLAYER has teammates from a different club in ROW
+                  Each MYSTERY PLAYER has teammates from another club in ROW
                   LINK [5]-[8]
                 </li>
               </ul>
@@ -40,12 +40,8 @@ export default function InfoModal({ closeInfoModal }) {
                   season cap
                 </li>
                 <li>LINK: club name and season (formatted as YYYY)</li>
-                <li>
-                  Shared Letters: letters in the answer but incorrect spot,
-                  separated by first/last name or club name/season.
-                </li>
                 <li className='list-none'>
-                  Note: Data synced up to August 12, 2024. Excludes 2021 data as
+                  Note: Data synced up to August 12, 2024. Excludes 2020 data as
                   that season was replaced by the Challenge Cup.
                 </li>
               </ul>
@@ -55,7 +51,7 @@ export default function InfoModal({ closeInfoModal }) {
             <h3 className='font-bold text-xl'>EXAMPLES</h3>
             <div className='flex flex-col space-y-2'>
               <span>'SARAH GORDEN' for answer 'SIMONE CHARLEY'</span>
-              <div className='flex flex-col whitespace-nowrap space-y-2 pl-4'>
+              <div className='flex flex-col whitespace-nowrap space-y-2 pl-4 text-xs'>
                 <div className='flex space-x-4'>
                   <div className='flex flex-col items-end'>
                     <span>Shared Letters:</span>
@@ -85,7 +81,7 @@ export default function InfoModal({ closeInfoModal }) {
             </div>
             <div className='flex flex-col space-y-2 mt-4'>
               <span>'THORNS 2019 for answer 'ANGEL CITY 2022'</span>
-              <div className='flex flex-col whitespace-nowrap space-y-2 pl-4'>
+              <div className='flex flex-col whitespace-nowrap space-y-2 pl-4 text-xs'>
                 <div className='flex space-x-4'>
                   <div className='flex flex-col items-end'>
                     <span>Shared Letters:</span>
