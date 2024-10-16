@@ -10,7 +10,7 @@ export default function RowInput({ handleRowSubmit, inputError }) {
           <input
             autoFocus
             type='number'
-            className='border border-black rounded-md w-1/12'
+            className='border border-black rounded-md w-[50px]'
             name='row'
             id='row'
             min='1'

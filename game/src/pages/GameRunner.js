@@ -329,9 +329,9 @@ export default function GameRunner({ updateStats, openStatsModal }) {
           />
         )}
       </div>
-      <div className='flex flex-row mt-48'>
+      <div className='flex flex-row mt-48 space-x-2'>
         <div className='flex-1 text-right'>
-          <span className='pr-4'>Guesses:</span>
+          <span className='pr-2'>Guesses:</span>
         </div>
         <div className='flex-1'>{guessCount}</div>
       </div>

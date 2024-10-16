@@ -8,55 +8,66 @@ export default function Grid({ players, connections }) {
             <td className='font-bold px-4'>MYSTERY PLAYERS</td>
             <td className='font-bold px-4'>ROW LINKS</td>
           </tr>
-          {players.map((row, i) => (
+          {Array.from({ length: 4 }, (_, i) => (
             <tr key={`game-row-${i}`} className={`game-row-${i}`}>
-              {row.map((player, j) => (
-                <td
-                  key={`player-${i}-${j}`}
-                  className={`player-${i}-${j} border border-black rounded-md px-4 flex-grow border-spacing-0`}
+              {/* known players */}
+              <td colSpan={3} className='border border-black rounded-md px-4'>
+                <div className='flex justify-between'>
+                  {players[i].slice(0, 3).map((player, j) => (
+                    <div
+                      key={`player-${i}-${j}`}
+                      className={`player-${i}-${j} justify-start px-4 w-1/3`}
+                    >
+                      <span
+                        className={`player-span-${i}-${j} whitespace-nowrap`}
+                      >
+                        {player.split(' ').map((part, k) => (
+                          <span key={`player-${i}-${j}-${k}`} className='px-2'>
+                            {part}
+                          </span>
+                        ))}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </td>
+              {/* mystery player*/}
+              <td
+                key={`player-${i}-3`}
+                className={`player-${i}-3 border border-black rounded-md px-4`}
+              >
+                <span
+                  key={`player-span-${i}-3`}
+                  className={`player-span-${i}-3 space-x-8`}
                 >
                   <span
-                    key={`player-span-${i}-${j}`}
-                    className={`player-span-${i}-${j} space-x-8`}
+                    key={`label-player-${i}-3`}
+                    className={`label-player-${i}-3 -mr-4`}
                   >
-                    {j == 3 ? (
-                      <span
-                        key={`label-player-${i}-${j}`}
-                        className={`label-player-${i}-${j} -mr-4`}
-                      >
-                        {`[${i + 1}]`}
-                      </span>
-                    ) : (
-                      ''
-                    )}
-                    {player.split(' ').map((part, k) =>
-                      j < 3 ? (
-                        <span
-                          key={`player-${i}-${j}-${k}`}
-                          className='whitespace-nowrap'
-                        >
-                          {part}
-                        </span>
-                      ) : (
-                        <span
-                          key={`player-letter-${i}-${j}-${k}`}
-                          className='space-x-2'
-                        >
-                          {part.split('').map((letter, l) => (
-                            <span key={l}>{letter}</span>
-                          ))}
-                        </span>
-                      )
-                    )}
+                    {`[${i + 1}]`}
                   </span>
-                </td>
-              ))}
+                  {players[i][3].split(' ').map((part, k) => (
+                    <span
+                      key={`player-letter-${i}-3-${k}`}
+                      className='space-x-2'
+                    >
+                      {part.split('').map((letter, l) => (
+                        <span key={l}>{letter}</span>
+                      ))}
+                    </span>
+                  ))}
+                </span>
+              </td>
+
+              {/* link */}
               <td className='border border-black rounded-md px-4'>
                 <span key={`link-${i}`} className={`link-${i} space-x-8`}>
                   <span
                     key={`label-link-${i}`}
-                    className='label-link-${i} -mr-4'
-                  >{`[${i + 5}]`}</span>
+                    className={`label-link-${i} -mr-4`}
+                  >
+                    {`[${i + 5}]`}
+                  </span>
                   {connections[i].split(' ').map((part, j) => (
                     <span
                       key={`link-span${i}-${j}`}
