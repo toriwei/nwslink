@@ -4,10 +4,10 @@ export default function StatsModal({
   showGameCompleteMessage,
 }) {
   return (
-    <div className='fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-75'>
-      <div className='relative flex flex-col w-1/2 h-3/4 p-4 pb-12  bg-white rounded-lg text-center'>
+    <div className='fixed inset-0 z-10 flex items-center justify-center bg-black bg-opacity-75 text-sm'>
+      <div className='relative flex flex-col w-4/5 md:w-1/2 h-3/4 p-4 pb-12 bg-white rounded-lg text-center'>
         <button className='text-right' onClick={closeStatsModal}>
-          <span className='bg-[#0036FF] hover:bg-[#001E60] text-white  rounded px-2'>
+          <span className='bg-[#0036FF] hover:bg-[#001E60] text-white rounded px-3 text-xl pb-[1px]'>
             &times;
           </span>
         </button>
@@ -17,7 +17,7 @@ export default function StatsModal({
           </h2>
         </div>
 
-        <div className='modal-content overflow-auto flex flex-col w-full px-8 pb-4 text-left space-y-6'>
+        <div className='modal-content overflow-auto flex flex-col w-full px-4 md:px-8 pb-4 text-left space-y-6'>
           {showGameCompleteMessage && (
             <div className='flex flex-1 flex-col text-center'>
               <span className='font-bold text-5xl'>{stats.currentScore}</span>

@@ -1,6 +1,5 @@
 import InputMessage from './InputMessage'
 import SpacedLetters from './SpacedLetters'
-// to do: divs to line up guess team name and progress team name (and same w/ season)
 export default function GuessInput({
   isPlayerGuess,
   gameProgress,
@@ -31,7 +30,7 @@ export default function GuessInput({
 
   const getFormattedGuessLog = (guessLog) => {
     return guessLog.map((player, i) => (
-      <div key={i}>
+      <div className='' key={i}>
         <SpacedLetters parts={player} />
       </div>
     ))
@@ -39,42 +38,32 @@ export default function GuessInput({
 
   return (
     <div>
-      <div>
-        <div className='flex flex-col space-x-2'>
-          <div className='flex flex-row flex-1'>
-            <div className='flex-1 text-right'>
-              <span className='pr-4'>Shared Letters:</span>
-            </div>
-            <div className='flex-1'>{getFormattedSharedLetters()}</div>
-          </div>
-          <div className='flex flex-row flex-1 '>
-            <div className='flex-1 text-right'>
-              <span className='pr-4'>Your Guess:</span>
-            </div>
-            <div className='flex-1'>
-              {guess && <SpacedLetters parts={guess} />}
-            </div>
-          </div>
-          <div className='flex flex-row flex-1'>
-            <div className='flex-1 text-right'>
-              <span className='pr-4'>Progress:</span>
-            </div>
-            <div className='flex-1'>{getFormattedProgress()}</div>
-          </div>
-          <div className='flex flex-row flex-1 mt-2'>
-            <div className='flex-1 text-right'>
-              <label htmlFor='guess' className='pr-4'>
-                Enter your guess <span>[{gridRow}]</span>:
+      <div className='results flex flex-col whitespace-nowrap w-full'>
+        <div className='flex justify-center items-end'>
+          <div className='flex flex-col flex-1 items-end space-y-1'>
+            <span className='pr-4'>Shared Letters:</span>
+            <span className='pr-4'>Your Guess:</span>
+            <span className='pr-4'>Progress:</span>
+            <span className='pr-4 h-[22px]lg:h-[26px]'>
+              <label htmlFor='guess'>
+                Enter guess <span>[{gridRow}]</span>:
               </label>
-            </div>
-            <div className='flex-1'>
+            </span>
+          </div>
+          <div className='flex flex-col flex-1 items-start space-y-1'>
+            <span>{getFormattedSharedLetters()}</span>
+            <span className='flex-1'>
+              {guess ? <SpacedLetters parts={guess} /> : <span>&nbsp;</span>}
+            </span>
+            <span>{getFormattedProgress()}</span>
+            <span>
               <form onSubmit={handleGuess}>
-                <div className='flex'>
+                <div className='flex h-[22px]lg:h-[26px]'>
                   <div className='flex flex-col relative'>
                     <input
                       autoFocus
                       type='text'
-                      className='border border-black rounded-md w-96'
+                      className='border border-black rounded-md w-32 sm:w-64 md:w-82 lg:w-96'
                       name='guess'
                       id='guess'
                       autoComplete='off'
@@ -103,17 +92,17 @@ export default function GuessInput({
                   </div>
                 </div>
               </form>
-            </div>
+            </span>
           </div>
         </div>
       </div>
-      <div className='flex w-full relative '>
-        <div className='absolute left-0 right-0 flex flex-row mt-8 space-x-2'>
+      <div className='guess-log relative flex w-full h-full whitespace-nowrap '>
+        <div className='absolute left-0 right-0 flex flex-row mt-8'>
           <div className='flex-1 text-right'>
             <span className='pr-4'>Guess Log:</span>
           </div>
-          <div className='flex-1 flex flex-col w-full'>
-            <div className='max-w-96 h-16 max-h-36 overflow-auto border resize-y border border-black rounded-md'>
+          <div className='flex-1'>
+            <div className='resize-y w-32 sm:w-64 md:w-82 lg:w-96 min-h-8 h-16 max-h-24 lg:max-h-36 overflow-auto border border-black rounded-md'>
               {guessLog.length > 0 && getFormattedGuessLog(guessLog)}
             </div>
           </div>

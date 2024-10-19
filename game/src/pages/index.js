@@ -9,6 +9,7 @@ const ibm_Plex_Mono = IBM_Plex_Mono({
   weight: '400',
   subsets: ['latin'],
 })
+
 export default function Home() {
   const [showStatsModal, setShowStatsModal] = useState(false)
   const [showInfoModal, setShowInfoModal] = useState(false)
@@ -32,7 +33,6 @@ export default function Home() {
   const closeInfoModal = () => setShowInfoModal(false)
 
   const updateStats = (newScore, newPlayerGuesses, newLinkGuesses) => {
-    console.log(newScore)
     setShowGameCompleteMessage(true)
     setStats((prev) => {
       const bestScore = prev.bestScore ?? Number(newScore)
@@ -69,11 +69,15 @@ export default function Home() {
     const storedStats = localStorage.getItem('stats')
     if (storedStats) {
       setStats(JSON.parse(storedStats))
+    } else {
+      openInfoModal() // opens the info modal for first-time players
     }
   }, [])
 
   return (
-    <div className={`${ibm_Plex_Mono.className} w-screen h-screen px-12 pt-8`}>
+    <div
+      className={`${ibm_Plex_Mono.className} w-screen h-screen px-8 lg:px-12 pt-8 text-xs md:text-sm lg:text-base`}
+    >
       <Header openStatsModal={openStatsModal} openInfoModal={openInfoModal} />
       {showStatsModal && (
         <StatsModal

@@ -294,7 +294,10 @@ export default function GameRunner({ updateStats, openStatsModal }) {
     ) {
       setGameComplete(true)
       updateStats(guessCount, playerGuessCount, linkGuessCount)
-      openStatsModal(true)
+      // openStatsModal(true)
+      setTimeout(() => {
+        openStatsModal(true) // Open stats modal after 0.5s delay
+      }, 1000)
     }
   }, [gameProgress.playerGuessedList, gameProgress.connectionsGuessedList])
 
@@ -311,7 +314,7 @@ export default function GameRunner({ updateStats, openStatsModal }) {
           <p>Building Game... Creating Links... Warming Up...</p>
         </div>
       )}
-      <div className='min-h-36 content-end'>
+      <div className='min-h-24 sm:min-h-36 content-end'>
         {row === undefined ? (
           <RowInput handleRowSubmit={handleRowSubmit} inputError={inputError} />
         ) : (
@@ -329,11 +332,13 @@ export default function GameRunner({ updateStats, openStatsModal }) {
           />
         )}
       </div>
-      <div className='flex flex-row mt-48 space-x-2'>
+      <div className='flex flex-row mt-36 lg:mt-48 space-x-2'>
         <div className='flex-1 text-right'>
           <span className='pr-2'>Guesses:</span>
         </div>
-        <div className='flex-1'>{guessCount}</div>
+        <div className='flex-1'>
+          <span className=''>{guessCount}</span>
+        </div>
       </div>
     </div>
   )
