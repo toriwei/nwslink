@@ -3,9 +3,13 @@ from flask_cors import CORS, cross_origin
 import driver
 import logging
 
+
 app = Flask(__name__)
 CORS(app)
 
+@app.route('/ping', methods=['GET'])
+def ping():
+    return jsonify({'status': 'success', 'message': 'Connection successful'}), 200
 
 @app.route('/random_player', methods=['GET'])
 def get_random_player():

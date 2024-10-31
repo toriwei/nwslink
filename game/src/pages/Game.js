@@ -103,7 +103,18 @@ class Game {
       this.connectionsSet = CONNECTIONS_SET
     }
   }
+
   // API CALL METHODS
+  async checkAPIConnection() {
+    try {
+      await axios.get('http://127.0.0.1:5000/ping')
+      return true
+    } catch (error) {
+      console.error('API connection failed', error)
+      return false
+    }
+  }
+
   async getRandomPlayer() {
     try {
       const res = await axios.get('http://127.0.0.1:5000/random_player')

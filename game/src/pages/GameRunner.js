@@ -6,8 +6,10 @@ import RowInput from './RowInput'
 import GuessInput from './GuessInput'
 import axios from 'axios'
 
+const IS_RANDOM_GAME = true
+
 export default function GameRunner({ updateStats, openStatsModal }) {
-  const IS_RANDOM_GAME = false
+  const [setupError, setSetupError] = useState(null)
   const [gameProgress, setGameProgress] = useState({
     game: null,
     playersProgress: [],
@@ -252,9 +254,19 @@ export default function GameRunner({ updateStats, openStatsModal }) {
     }
   }
 
+  // USE EFFECT
   useEffect(() => {
     async function initializeGame() {
+      setSetupError(null)
       const game = new Game(IS_RANDOM_GAME)
+      const isConnected = await game.checkAPIConnection()
+
+      if (!isConnected) {
+        setSetupError(
+          'Could not create a game at this time. Please try again later.'
+        )
+        return
+      }
       await game.setupGame()
 
       let playersProgress = game.setPlayersProgress(
@@ -281,6 +293,7 @@ export default function GameRunner({ updateStats, openStatsModal }) {
         connectionsGuessedList,
       })
     }
+
     if (!hasRun.current) {
       initializeGame()
       hasRun.current = true
@@ -294,52 +307,58 @@ export default function GameRunner({ updateStats, openStatsModal }) {
     ) {
       setGameComplete(true)
       updateStats(guessCount, playerGuessCount, linkGuessCount)
-      // openStatsModal(true)
       setTimeout(() => {
-        openStatsModal(true) // Open stats modal after 0.5s delay
+        openStatsModal(true)
       }, 1000)
     }
   }, [gameProgress.playerGuessedList, gameProgress.connectionsGuessedList])
 
   return (
     <div className='h-5/6'>
-      {gameProgress.playersProgress.length > 0 &&
-      gameProgress.mysteryConnectionsProgress.length > 0 ? (
-        <Grid
-          players={gameProgress.playersProgress}
-          connections={gameProgress.mysteryConnectionsProgress}
-        />
+      {setupError ? (
+        <div className='text-red-500 text-center'>{setupError}</div>
+      ) : gameProgress.playersProgress.length > 0 &&
+        gameProgress.mysteryConnectionsProgress.length > 0 ? (
+        <div>
+          <Grid
+            players={gameProgress.playersProgress}
+            connections={gameProgress.mysteryConnectionsProgress}
+          />
+          <div className='min-h-24 sm:min-h-36 content-end'>
+            {row === undefined ? (
+              <RowInput
+                handleRowSubmit={handleRowSubmit}
+                inputError={inputError}
+              />
+            ) : (
+              <GuessInput
+                isPlayerGuess={isPlayerGuess}
+                gameProgress={gameProgress}
+                row={row}
+                guess={guess}
+                gridRow={gridRow}
+                handleGuess={handleGuess}
+                showCorrect={showCorrect}
+                inputError={inputError}
+                gameComplete={gameComplete}
+                guessLog={guessLog[gridRow - 1]}
+              />
+            )}
+          </div>
+          <div className='flex flex-row mt-36 lg:mt-48 space-x-2'>
+            <div className='flex-1 text-right'>
+              <span className='pr-2'>Guesses:</span>
+            </div>
+            <div className='flex-1'>
+              <span className=''>{guessCount}</span>
+            </div>
+          </div>
+        </div>
       ) : (
         <div className='w-full text-center pt-4'>
           <p>Building Game... Creating Links... Warming Up...</p>
         </div>
       )}
-      <div className='min-h-24 sm:min-h-36 content-end'>
-        {row === undefined ? (
-          <RowInput handleRowSubmit={handleRowSubmit} inputError={inputError} />
-        ) : (
-          <GuessInput
-            isPlayerGuess={isPlayerGuess}
-            gameProgress={gameProgress}
-            row={row}
-            guess={guess}
-            gridRow={gridRow}
-            handleGuess={handleGuess}
-            showCorrect={showCorrect}
-            inputError={inputError}
-            gameComplete={gameComplete}
-            guessLog={guessLog[gridRow - 1]}
-          />
-        )}
-      </div>
-      <div className='flex flex-row mt-36 lg:mt-48 space-x-2'>
-        <div className='flex-1 text-right'>
-          <span className='pr-2'>Guesses:</span>
-        </div>
-        <div className='flex-1'>
-          <span className=''>{guessCount}</span>
-        </div>
-      </div>
     </div>
   )
 }

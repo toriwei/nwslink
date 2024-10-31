@@ -11,6 +11,7 @@ const ibm_Plex_Mono = IBM_Plex_Mono({
 })
 
 export default function Home() {
+  const [gameKey, setGameKey] = useState(0)
   const [showStatsModal, setShowStatsModal] = useState(false)
   const [showInfoModal, setShowInfoModal] = useState(false)
   const [showGameCompleteMessage, setShowGameCompleteMessage] = useState(false)
@@ -25,6 +26,11 @@ export default function Home() {
     averagePlayerGuesses: undefined,
     averageLinkGuesses: undefined,
   })
+
+  const resetGame = () => {
+    setGameKey((prevKey) => prevKey + 1)
+    setShowStatsModal(false)
+  }
 
   const openStatsModal = () => setShowStatsModal(true)
   const closeStatsModal = () => setShowStatsModal(false)
@@ -84,10 +90,12 @@ export default function Home() {
           closeStatsModal={closeStatsModal}
           stats={stats}
           showGameCompleteMessage={showGameCompleteMessage}
+          resetGame={resetGame}
         />
       )}
       {showInfoModal && <InfoModal closeInfoModal={closeInfoModal} />}
       <GameRunner
+        key={gameKey}
         stats={stats}
         updateStats={updateStats}
         openStatsModal={openStatsModal}

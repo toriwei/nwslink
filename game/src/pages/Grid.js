@@ -12,19 +12,19 @@ export default function Grid({ players, connections }) {
             <tr key={`game-row-${i}`} className={`game-row-${i}`}>
               {/* known players */}
               <td colSpan={3} className='border border-black rounded-md'>
-                <div className='flex justify-between'>
+                <div className='flex justify-between px-1 space-x-2'>
                   {players[i].slice(0, 3).map((player, j) => (
                     <div
                       key={`player-${i}-${j}`}
-                      className={`player-${i}-${j} px-4 w-1/3`}
+                      className={`player-${i}-${j} px-2 w-1/3`}
                     >
                       <span
-                        className={`player-span-${i}-${j} whitespace-nowrap`}
+                        className={`player-span-${i}-${j} flex flex-wrap space-x-1 lg:space-x-2`}
                       >
                         {player.split(' ').map((part, k) => (
                           <span
                             key={`player-${i}-${j}-${k}`}
-                            className='px-1 lg:px-2'
+                            className='first:ml-1 lg:first:ml-2'
                           >
                             {part}
                           </span>

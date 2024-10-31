@@ -1,8 +1,18 @@
 const PLAYERS = [
-  ['Clare Polkinghorne', 'Kendall Johnson', 'Michelle Betos', 'Kate Del Fava'],
+  [
+    'Clare Polkinghorne',
+    'Kendall Johnson',
+    'Michelle Betos',
+    'Victoria Pickett',
+  ],
   ['Raquel Rodríguez', 'Emily Menges', 'Simone Charley', 'Yazmeen Ryan'],
   ['Cari Roccaro', 'Kendall Fletcher', 'Lynn Williams', 'Taylor Smith'],
-  ['Emily van Egmond', 'Toni Pressley', 'Ashlyn Harris', 'Kristen Edmonds'],
+  [
+    'Emily van Egmond',
+    'Toni Pressley',
+    'Gunnhildur Yrsa Jónsdóttir',
+    'Kristen Edmonds',
+  ],
 ].map((row) => row.map((player) => player.toUpperCase()))
 
 const CONNECTIONS = [
