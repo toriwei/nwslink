@@ -8,7 +8,7 @@ import numpy as np # type: ignore
 season_range = np.arange(13, 25)
 season_range = season_range[season_range != 21]
 
-nwsl = sd.FBref('USA-National Women\'s Soccer League', season_range)
+nwsl = sd.FBref('USA-National Women\'s Soccer League', season_range, no_cache=True)
 
 df = (
     nwsl.read_player_season_stats()

@@ -7,6 +7,8 @@ import {
 } from './game_utils'
 import axios from 'axios'
 
+const TESTING = false
+
 class Game {
   constructor(IS_RANDOM_GAME) {
     this.IS_RANDOM_GAME = IS_RANDOM_GAME
@@ -56,6 +58,13 @@ class Game {
             `${this.mysteryConnection.team}-${this.mysteryConnection.season}`
           )
           this.connections.push(this.mysteryConnection)
+
+          if (TESTING) {
+            console.log(
+              `MYSTERY LINK 9: ${this.mysteryConnection.team} ${this.mysteryConnection.season}`
+            )
+            console.log('')
+          }
         } else {
           // get random teammate of initial mystery player
           mysteryPlayer = await this.getUniqueTeammate(
@@ -64,18 +73,43 @@ class Game {
           )
         }
         // set mystery player
-        this.playersSet.add(mysteryPlayer)
-        this.mysteryPlayers[i] = mysteryPlayer
-        this.players[i][3] = mysteryPlayer
-
+        this.setMysteryPlayer(i, mysteryPlayer)
+        if (TESTING) {
+          console.log('')
+          console.log(`MYSTERY PLAYER ${i + 1}: ${mysteryPlayer}`)
+        }
         // get secondary connection
-        let rowConnection = await this.getUniqueSeason(
-          mysteryPlayer,
-          this.mysteryConnection.team
-        )
+        let rowConnection = null
+        while (rowConnection === null) {
+          rowConnection = await this.getUniqueSeason(
+            mysteryPlayer,
+            this.mysteryConnection.team
+          )
+          if (rowConnection) {
+            break
+          }
+          if (TESTING) {
+            console.log('RESETTING')
+          }
+          this.playersSet.delete(mysteryPlayer)
+          // TODO: add impossible mystery player to list, make sure new mysteryPlayer is not impossible
+          mysteryPlayer = await this.getUniqueTeammate(
+            this.mysteryConnection.team,
+            this.mysteryConnection.season
+          )
+          this.setMysteryPlayer(i, mysteryPlayer)
+        }
 
         this.connections[i]['team'] = rowConnection.team
         this.connections[i]['season'] = rowConnection.season
+
+        if (TESTING) {
+          console.log(
+            `MYSTERY LINK ${i + 1}: ${rowConnection.team} ${
+              rowConnection.season
+            }`
+          )
+        }
         // // get and set remaining players
         for (let j = 0; j < 3; j++) {
           let teammate = await this.getUniqueTeammate(
@@ -83,6 +117,9 @@ class Game {
             rowConnection.season
           )
           this.players[i][j] = teammate
+        }
+        if (TESTING) {
+          console.log('')
         }
       }
 
@@ -95,6 +132,11 @@ class Game {
       this.connections = this.connections.map(
         (connection) => `${connection.team.toUpperCase()} ${connection.season}`
       )
+      if (TESTING) {
+        console.log('DONE')
+        console.log(this.playersSet)
+        console.log(this.connectionsSet)
+      }
     } else {
       this.players = PLAYERS
       this.connections = CONNECTIONS
@@ -106,8 +148,9 @@ class Game {
 
   // API CALL METHODS
   async checkAPIConnection() {
+    // TODO: attempted /ping but would still return true when server down
     try {
-      await axios.get('http://127.0.0.1:5000/ping')
+      await axios.get('http://127.0.0.1:5000/random_player')
       return true
     } catch (error) {
       console.error('API connection failed', error)
@@ -162,6 +205,12 @@ class Game {
   }
 
   // HELPER METHODS
+  setMysteryPlayer(i, mysteryPlayer) {
+    this.playersSet.add(mysteryPlayer)
+    this.mysteryPlayers[i] = mysteryPlayer
+    this.players[i][3] = mysteryPlayer
+  }
+
   async getRandomSeason(seasons) {
     const cleanedSeasons = seasons
       .replace('[', '')
@@ -174,6 +223,12 @@ class Game {
   async getUniqueTeammate(team, season) {
     while (true) {
       let teammate = await this.getRandomTeammate(team, season)
+      if (TESTING) {
+        console.log(
+          `TEAMMATE: ${teammate} | IN SET: ${this.playersSet.has(teammate)}`
+        )
+      }
+
       if (!this.playersSet.has(teammate)) {
         this.playersSet.add(teammate)
         return teammate
@@ -181,8 +236,11 @@ class Game {
     }
   }
 
+  // TODO: can probably reduce attempts by checking amount of playedFor teams and and/or randomSeason seasons available
   async getUniqueSeason(player, team) {
-    while (true) {
+    const maxAttempts = 10
+
+    for (let i = 0; i < maxAttempts; i++) {
       let playedFor = await this.getRandomPlayedFor(player, team)
       let randomSeason = await this.getRandomSeason(playedFor.seasons)
 
@@ -197,6 +255,7 @@ class Game {
         return playedForObj
       }
     }
+    return null
   }
 
   // STRING MANIPULATION HELPER METHODS

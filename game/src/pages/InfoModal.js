@@ -83,7 +83,7 @@ export default function InfoModal({ closeInfoModal }) {
             </li>
             <li>LINK: club name and season (formatted as YYYY)</li>
             <li className='list-none'>
-              Note: Data synced up to August 12, 2024. Excludes 2020 data as
+              Note: Data synced up to November 14, 2024. Excludes 2020 data as
               that season was replaced by the Challenge Cup.
             </li>
           </ul>

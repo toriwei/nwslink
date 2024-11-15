@@ -260,7 +260,6 @@ export default function GameRunner({ updateStats, openStatsModal }) {
       setSetupError(null)
       const game = new Game(IS_RANDOM_GAME)
       const isConnected = await game.checkAPIConnection()
-
       if (!isConnected) {
         setSetupError(
           'Could not create a game at this time. Please try again later.'
