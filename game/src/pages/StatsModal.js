@@ -76,7 +76,7 @@ export default function StatsModal({
             <div className='flex flex-1'></div>
           </div>
         </div>
-        <div className='mt-auto mx-auto'>
+        <div className='mt-auto mx-auto pt-4'>
           <button
             className='bg-nwslElectricBlue hover:bg-nwslNavy text-white px-4 py-2 text-xs sm:text-sm rounded font-bold'
             onClick={() => {
