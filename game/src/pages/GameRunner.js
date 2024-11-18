@@ -4,8 +4,11 @@ import Grid from './Grid'
 import Guess from './Guess'
 import RowInput from './RowInput'
 import GuessInput from './GuessInput'
-import axios from 'axios'
-
+import {
+  checkAPIConnection,
+  isValidPlayer,
+  isValidTeamName,
+} from '../../api/gameAPI'
 const IS_RANDOM_GAME = true
 
 export default function GameRunner({ updateStats, openStatsModal }) {
@@ -87,9 +90,7 @@ export default function GameRunner({ updateStats, openStatsModal }) {
         setInputError('Not a valid NWSL player.')
         return
       }
-    }
-
-    if (!isPlayerGuess) {
+    } else {
       if (!isValidConnectionFormat(guessInput)) {
         e.target.elements.guess.value = ''
         return
@@ -127,9 +128,7 @@ export default function GameRunner({ updateStats, openStatsModal }) {
       isPlayerGuess
     )
 
-    console.log(guessObj)
     let result = guessObj.handleGuess()
-    console.log(result)
 
     setGameProgress((prev) => ({
       ...prev,
@@ -157,7 +156,20 @@ export default function GameRunner({ updateStats, openStatsModal }) {
     }))
 
     setGuess(getFormattedGuess(result))
-    setGuessCount((prev) => prev + 1)
+    console.log(guessLog)
+
+    console.log(typeof guessCount)
+    setGuessCount((prev) => {
+      const newCount = parseInt(prev) + 1
+
+      setGameProgress((prevProgress) => {
+        const updatedProgress = { ...prevProgress, guessCount: newCount }
+        localStorage.setItem('currentGame', JSON.stringify(updatedProgress))
+        return updatedProgress
+      })
+      console.log(newCount)
+      return newCount
+    })
 
     if (isPlayerGuess) {
       increasePlayerGuessCount()
@@ -214,86 +226,92 @@ export default function GameRunner({ updateStats, openStatsModal }) {
         guessBuild.slice(guessBuild.length - 1)[0],
       ]
     }
-    setGuessLog((prev) =>
-      prev.map((arr, index) =>
+
+    setGuessLog((prev) => {
+      console.log('meep')
+      const newGuessLog = prev.map((arr, index) =>
         index === gridRow - 1 ? [guessBuild, ...arr] : arr
       )
-    )
+      setGameProgress((prevGameProgress) => {
+        const updatedProgress = { ...prevGameProgress, guessLog: newGuessLog }
+        localStorage.setItem('currentGame', JSON.stringify(updatedProgress))
+        return updatedProgress
+      })
+
+      return newGuessLog
+    })
     return guessBuild
-  }
-
-  // API CALL METHODS
-  const isValidPlayer = async (name) => {
-    try {
-      const res = await axios.get('http://127.0.0.1:5000/is_valid_player', {
-        params: {
-          name: name,
-        },
-      })
-      console.log(res.data)
-      return res.data.is_valid_player
-    } catch (e) {
-      console.log(e)
-      throw new Error('Failed to search player name')
-    }
-  }
-
-  const isValidTeamName = async (team) => {
-    console.log(team)
-    try {
-      const res = await axios.get('http://127.0.0.1:5000/is_valid_team_name', {
-        params: {
-          team: team,
-        },
-      })
-      console.log(res.data)
-      return res.data.is_valid_team_name
-    } catch (e) {
-      console.log(e)
-      throw new Error('Failed to search player name')
-    }
   }
 
   // USE EFFECT
   useEffect(() => {
+    const savedGame = JSON.parse(localStorage.getItem('currentGame'))
     async function initializeGame() {
       setSetupError(null)
-      const game = new Game(IS_RANDOM_GAME)
-      const isConnected = await game.checkAPIConnection()
-      if (!isConnected) {
-        setSetupError(
-          'Could not create a game at this time. Please try again later.'
+      let game = undefined
+      console.log(savedGame)
+      if (savedGame) {
+        console.log('importing saved game')
+        game = new Game(IS_RANDOM_GAME, savedGame)
+        setGameProgress(savedGame)
+        setGuessCount(savedGame.guessCount)
+        setGuessLog(savedGame.guessLog)
+
+        const isConnected = await checkAPIConnection()
+        if (!isConnected) {
+          setSetupError(
+            'Could not create a game at this time. Please try again later.'
+          )
+          return
+        }
+      } else {
+        console.log('game from scratch')
+        game = new Game(IS_RANDOM_GAME)
+        const isConnected = await checkAPIConnection()
+        if (!isConnected) {
+          setSetupError(
+            'Could not create a game at this time. Please try again later.'
+          )
+          return
+        }
+
+        await game.setupGame()
+
+        let playersProgress = game.setPlayersProgress(
+          game.players.map((row) => [...row])
         )
-        return
+        let mysteryPlayersProgress = playersProgress.map((row) => row[3])
+        let mysteryConnectionsProgress = game.setConnectionsProgress(
+          game.connections
+        )
+        let playerGuessedList = [false, false, false, false]
+        let connectionsGuessedList = [false, false, false, false, false]
+
+        let mysteryPlayersSharedLetters = [[], [], [], []]
+        let mysteryConnectionsSharedLetters = [[], [], [], [], []]
+
+        const currentGameProgress = {
+          game,
+          playersProgress,
+          mysteryPlayersProgress,
+          mysteryPlayersSharedLetters,
+          mysteryConnectionsProgress,
+          mysteryConnectionsSharedLetters,
+          playerGuessedList,
+          connectionsGuessedList,
+          guessCount,
+          guessLog,
+        }
+        setGameProgress(currentGameProgress)
+
+        localStorage.setItem('currentGame', JSON.stringify(currentGameProgress))
+        console.log(JSON.parse(localStorage.getItem('currentGame')))
       }
-      await game.setupGame()
-
-      let playersProgress = game.setPlayersProgress(
-        game.players.map((row) => [...row])
-      )
-      let mysteryPlayersProgress = playersProgress.map((row) => row[3])
-      let mysteryConnectionsProgress = game.setConnectionsProgress(
-        game.connections
-      )
-      let playerGuessedList = [false, false, false, false]
-      let connectionsGuessedList = [false, false, false, false, false]
-
-      let mysteryPlayersSharedLetters = [[], [], [], []]
-      let mysteryConnectionsSharedLetters = [[], [], [], [], []]
-
-      setGameProgress({
-        game,
-        playersProgress,
-        mysteryPlayersProgress,
-        mysteryPlayersSharedLetters,
-        mysteryConnectionsProgress,
-        mysteryConnectionsSharedLetters,
-        playerGuessedList,
-        connectionsGuessedList,
-      })
+      console.log(JSON.parse(localStorage.getItem('currentGame')))
     }
 
     if (!hasRun.current) {
+      console.log('gonna init')
       initializeGame()
       hasRun.current = true
     }

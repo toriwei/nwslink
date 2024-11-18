@@ -30,6 +30,7 @@ export default function Home() {
   const resetGame = () => {
     setGameKey((prevKey) => prevKey + 1)
     setShowStatsModal(false)
+    localStorage.removeItem('currentGame')
   }
 
   const openStatsModal = () => setShowStatsModal(true)

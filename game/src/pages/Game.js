@@ -5,46 +5,59 @@ import {
   MYSTERY_PLAYERS,
   CONNECTIONS_SET,
 } from './game_utils'
-import axios from 'axios'
 
-const TESTING = false
+import {
+  getRandomPlayer,
+  getRandomPlayedFor,
+  getRandomTeammate,
+} from '../../api/gameAPI'
+
+const TESTING = true
 
 class Game {
-  constructor(IS_RANDOM_GAME) {
+  constructor(IS_RANDOM_GAME, existingGame = undefined) {
     this.IS_RANDOM_GAME = IS_RANDOM_GAME
-    this.players = [
-      ['', '', '', ''],
-      ['', '', '', ''],
-      ['', '', '', ''],
-      ['', '', '', ''],
-    ]
+    this.existingGame = existingGame
 
-    this.connections = [
-      { team: '', season: '' },
-      { team: '', season: '' },
-      { team: '', season: '' },
-      { team: '', season: '' },
-    ]
+    if (this.existingGame) {
+      console.log('GAME LOADING')
+      this.players = this.existingGame.players
+      this.connections = this.existingGame.connections
+      this.mysteryConnection = this.existingGame.mysteryConnection
+      this.mysteryPlayers = this.existingGame.mysteryPlayers
+    } else {
+      this.players = [
+        ['', '', '', ''],
+        ['', '', '', ''],
+        ['', '', '', ''],
+        ['', '', '', ''],
+      ]
 
-    this.mysteryConnection = null
+      this.connections = [
+        { team: '', season: '' },
+        { team: '', season: '' },
+        { team: '', season: '' },
+        { team: '', season: '' },
+        { team: '', season: '' },
+      ]
 
-    this.mysteryPlayers = ['', '', '', '']
-    this.playersSet = new Set()
-    this.connectionsSet = new Set()
+      this.mysteryConnection = null
+
+      this.mysteryPlayers = ['', '', '', '']
+      this.playersSet = new Set()
+      this.connectionsSet = new Set()
+    }
   }
-
   async setupGame() {
     if (this.IS_RANDOM_GAME) {
       for (let i = 0; i < 4; i++) {
         let mysteryPlayer = ''
         if (i == 0) {
           // get initial mystery player
-          mysteryPlayer = await this.getRandomPlayer()
+          mysteryPlayer = await getRandomPlayer()
 
           // get mystery team
-          let mysteryConnectionRecord = await this.getRandomPlayedFor(
-            mysteryPlayer
-          )
+          let mysteryConnectionRecord = await getRandomPlayedFor(mysteryPlayer)
           let mysteryConnectionSeason = await this.getRandomSeason(
             mysteryConnectionRecord.seasons
           )
@@ -57,7 +70,7 @@ class Game {
           this.connectionsSet.add(
             `${this.mysteryConnection.team}-${this.mysteryConnection.season}`
           )
-          this.connections.push(this.mysteryConnection)
+          this.connections[4] = this.mysteryConnection
 
           if (TESTING) {
             console.log(
@@ -110,7 +123,7 @@ class Game {
             }`
           )
         }
-        // // get and set remaining players
+        // get and set remaining players
         for (let j = 0; j < 3; j++) {
           let teammate = await this.getUniqueTeammate(
             rowConnection.team,
@@ -132,75 +145,12 @@ class Game {
       this.connections = this.connections.map(
         (connection) => `${connection.team.toUpperCase()} ${connection.season}`
       )
-      if (TESTING) {
-        console.log('DONE')
-        console.log(this.playersSet)
-        console.log(this.connectionsSet)
-      }
     } else {
       this.players = PLAYERS
       this.connections = CONNECTIONS
       this.mysteryConnection = MYSTERY_TEAM
       this.mysteryPlayers = MYSTERY_PLAYERS
       this.connectionsSet = CONNECTIONS_SET
-    }
-  }
-
-  // API CALL METHODS
-  async checkAPIConnection() {
-    // TODO: attempted /ping but would still return true when server down
-    try {
-      await axios.get('http://127.0.0.1:5000/random_player')
-      return true
-    } catch (error) {
-      console.error('API connection failed', error)
-      return false
-    }
-  }
-
-  async getRandomPlayer() {
-    try {
-      const res = await axios.get('http://127.0.0.1:5000/random_player')
-      return res.data.player
-    } catch (e) {
-      console.log(e)
-      throw new Error('Failed to fetch random player')
-    }
-  }
-
-  async getRandomPlayedFor(mysteryPlayer, team) {
-    try {
-      const res = await axios.get(`http://127.0.0.1:5000/random_played_for`, {
-        params: {
-          player: mysteryPlayer,
-          team: team || undefined,
-        },
-      })
-      return res.data
-    } catch (e) {
-      console.log(e)
-      throw new Error(
-        `Failed to fetch random played-for relationship with params player= ${mysteryPlayer}, team= ${
-          team || 'undefined'
-        }`
-      )
-    }
-  }
-
-  async getRandomTeammate(team, season) {
-    try {
-      const res = await axios.get(`http://127.0.0.1:5000/random_teammate`, {
-        params: {
-          team: team,
-          season: season,
-        },
-      })
-      return res.data.teammate
-    } catch (e) {
-      console.log(e)
-      throw new Error(
-        `Failed to fetch random teammate with params team= ${team}, season= ${season}`
-      )
     }
   }
 
@@ -222,7 +172,7 @@ class Game {
 
   async getUniqueTeammate(team, season) {
     while (true) {
-      let teammate = await this.getRandomTeammate(team, season)
+      let teammate = await getRandomTeammate(team, season)
       if (TESTING) {
         console.log(
           `TEAMMATE: ${teammate} | IN SET: ${this.playersSet.has(teammate)}`
@@ -241,7 +191,7 @@ class Game {
     const maxAttempts = 10
 
     for (let i = 0; i < maxAttempts; i++) {
-      let playedFor = await this.getRandomPlayedFor(player, team)
+      let playedFor = await getRandomPlayedFor(player, team)
       let randomSeason = await this.getRandomSeason(playedFor.seasons)
 
       let playedForStr = `${playedFor.team}-${randomSeason}`
