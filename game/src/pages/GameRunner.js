@@ -30,7 +30,7 @@ export default function GameRunner({ updateStats, openStatsModal }) {
   const [inputError, setInputError] = useState('')
   const [guess, setGuess] = useState('')
   const [showCorrect, setShowCorrect] = useState(false)
-  const [gameComplete, setGameComplete] = useState(undefined)
+  const [gameComplete, setGameComplete] = useState(false)
   const [guessLog, setGuessLog] = useState(
     Array.from({ length: 9 }).map(() => [])
   )
@@ -158,24 +158,30 @@ export default function GameRunner({ updateStats, openStatsModal }) {
     setGuess(getFormattedGuess(result))
     console.log(guessLog)
 
-    console.log(typeof guessCount)
+    if (isPlayerGuess) {
+      increasePlayerGuessCount()
+    } else {
+      increaseLinkGuessCount()
+    }
+
+    console.log('INCR GUESS')
+
     setGuessCount((prev) => {
       const newCount = parseInt(prev) + 1
 
       setGameProgress((prevProgress) => {
-        const updatedProgress = { ...prevProgress, guessCount: newCount }
+        const updatedProgress = {
+          ...prevProgress,
+          guessCount: newCount,
+          playerGuessCount: playerGuessCount,
+          linkGuessCount: linkGuessCount,
+        }
         localStorage.setItem('currentGame', JSON.stringify(updatedProgress))
         return updatedProgress
       })
       console.log(newCount)
       return newCount
     })
-
-    if (isPlayerGuess) {
-      increasePlayerGuessCount()
-    } else {
-      increaseLinkGuessCount()
-    }
 
     if (!result.progress.includes('_')) {
       setShowCorrect(true)
@@ -255,7 +261,10 @@ export default function GameRunner({ updateStats, openStatsModal }) {
         game = new Game(IS_RANDOM_GAME, savedGame)
         setGameProgress(savedGame)
         setGuessCount(savedGame.guessCount)
+        setPlayerGuessCount(savedGame.playerGuessCount)
+        setLinkGuessCount(savedGame.linkGuessCount)
         setGuessLog(savedGame.guessLog)
+        setGameComplete(savedGame.gameComplete)
 
         const isConnected = await checkAPIConnection()
         if (!isConnected) {
@@ -300,18 +309,19 @@ export default function GameRunner({ updateStats, openStatsModal }) {
           playerGuessedList,
           connectionsGuessedList,
           guessCount,
+          playerGuessCount,
+          linkGuessCount,
           guessLog,
+          gameComplete,
         }
         setGameProgress(currentGameProgress)
 
         localStorage.setItem('currentGame', JSON.stringify(currentGameProgress))
-        console.log(JSON.parse(localStorage.getItem('currentGame')))
       }
       console.log(JSON.parse(localStorage.getItem('currentGame')))
     }
 
     if (!hasRun.current) {
-      console.log('gonna init')
       initializeGame()
       hasRun.current = true
     }
@@ -319,10 +329,22 @@ export default function GameRunner({ updateStats, openStatsModal }) {
 
   useEffect(() => {
     if (
+      !gameComplete &&
       !gameProgress.playerGuessedList.includes(false) &&
       !gameProgress.connectionsGuessedList.includes(false)
     ) {
       setGameComplete(true)
+      setGameProgress((prevProgress) => {
+        const updatedProgress = {
+          ...prevProgress,
+          guessCount: guessCount,
+          playerGuessCount: playerGuessCount,
+          linkGuessCount: linkGuessCount,
+          gameComplete: true,
+        }
+        localStorage.setItem('currentGame', JSON.stringify(updatedProgress))
+        return updatedProgress
+      })
       updateStats(guessCount, playerGuessCount, linkGuessCount)
       setTimeout(() => {
         openStatsModal(true)
