@@ -42,7 +42,10 @@ export default function Home() {
   const updateStats = (newScore, newPlayerGuesses, newLinkGuesses) => {
     setShowGameCompleteMessage(true)
     setStats((prev) => {
-      const bestScore = prev.bestScore == 0 ? Number(newScore) : prev.bestScore
+      const bestScore =
+        prev.bestScore == 0 || prev.bestScore == undefined
+          ? Number(newScore)
+          : prev.bestScore
       const gamesCompleted = prev.gamesCompleted ?? 0
       const totalScore = prev.totalScore ?? 0
       const currentScore = Number(newScore)
