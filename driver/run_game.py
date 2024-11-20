@@ -2,7 +2,7 @@ import time
 import game_utils
 from setup_game import Game
 from handle_guess import Guess
-from driver import is_valid_player, is_valid_team_name
+from nwsl_driver import is_valid_player, is_valid_team_name
 
 IS_RANDOM_GAME = True
 REVEAL_ANSWER = False

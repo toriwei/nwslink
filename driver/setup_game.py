@@ -1,7 +1,7 @@
 import random
 import game_utils
 from collections import namedtuple
-from driver import get_random_player, get_random_played_for, get_random_teammate
+from nwsl_driver import get_random_player, get_random_played_for, get_random_teammate
 
 class Game:
   def __init__(self, IS_RANDOM_GAME): 

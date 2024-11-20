@@ -1,5 +1,5 @@
 from unidecode import unidecode
-from driver import get_nonalpha_names, update_player_names
+from nwsl_driver import get_nonalpha_names, update_player_names
 
 
 try:

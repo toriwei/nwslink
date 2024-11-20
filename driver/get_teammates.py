@@ -1,5 +1,5 @@
 import sys
-from driver import get_teammates
+from nwsl_driver import get_teammates
 
 if len(sys.argv) != 2:
   print('Usage get_teammates.py <player>')

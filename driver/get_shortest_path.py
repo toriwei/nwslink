@@ -1,5 +1,5 @@
 import sys
-from driver import get_shortest_path
+from nwsl_driver import get_shortest_path
 
 if len(sys.argv) != 3:
   print('Usage get_shortest_path.py <player_1> <player_2>')

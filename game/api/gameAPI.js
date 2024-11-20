@@ -1,9 +1,10 @@
 import axios from 'axios'
+const url = process.env.NEXT_PUBLIC_BACKEND_URL
 
 export const checkAPIConnection = async () => {
   // TODO: attempted /ping but would still return true when server down
   try {
-    await axios.get('http://127.0.0.1:5000/random_player')
+    await axios.get(`${process.env.BACKEND_URL}/random_player`)
     return true
   } catch (error) {
     console.error('API connection failed', error)
@@ -13,7 +14,7 @@ export const checkAPIConnection = async () => {
 
 export const getRandomPlayer = async () => {
   try {
-    const res = await axios.get('http://127.0.0.1:5000/random_player')
+    const res = await axios.get(`${url}/random_player`)
     return res.data.player
   } catch (e) {
     console.log(e)
@@ -23,7 +24,7 @@ export const getRandomPlayer = async () => {
 
 export const getRandomPlayedFor = async (mysteryPlayer, team) => {
   try {
-    const res = await axios.get(`http://127.0.0.1:5000/random_played_for`, {
+    const res = await axios.get(`${url}/random_played_for`, {
       params: {
         player: mysteryPlayer,
         team: team || undefined,
@@ -42,7 +43,7 @@ export const getRandomPlayedFor = async (mysteryPlayer, team) => {
 
 export const getRandomTeammate = async (team, season) => {
   try {
-    const res = await axios.get(`http://127.0.0.1:5000/random_teammate`, {
+    const res = await axios.get(`${url}/random_teammate`, {
       params: {
         team: team,
         season: season,
@@ -59,7 +60,7 @@ export const getRandomTeammate = async (team, season) => {
 
 export const isValidPlayer = async (name) => {
   try {
-    const res = await axios.get('http://127.0.0.1:5000/is_valid_player', {
+    const res = await axios.get(`${url}/is_valid_player`, {
       params: {
         name: name,
       },
@@ -75,7 +76,7 @@ export const isValidPlayer = async (name) => {
 export const isValidTeamName = async (team) => {
   console.log(team)
   try {
-    const res = await axios.get('http://127.0.0.1:5000/is_valid_team_name', {
+    const res = await axios.get(`${url}/is_valid_team_name`, {
       params: {
         team: team,
       },
