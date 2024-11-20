@@ -1,6 +1,6 @@
 export default function Header({ openStatsModal, openInfoModal }) {
   return (
-    <div className='header flex flex-row items-center justify-between max-h-16 text-purple-500 sm:text-orange-500 sm:text-green-500 md:text-blue-500 lg:text-pink-500'>
+    <div className='header flex flex-row items-center justify-between max-h-16'>
       <div className='flex-none md:flex-1'></div>
       <h1 className='flex-1 font-bold text-3xl text-left md:text-center justify-center'>
         NWSLink

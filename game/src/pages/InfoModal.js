@@ -77,14 +77,12 @@ export default function InfoModal({ closeInfoModal }) {
         <h3 className='text-xl font-bold'>FORMAT</h3>
         <div className='space-y-4'>
           <ul className='list-disc pl-4 space-y-2'>
-            <li>
-              MYSTERY PLAYER: full name of a NWSL player with a regular season
-              cap
-            </li>
+            <li>MYSTERY PLAYER: full name of a NWSL player</li>
             <li>LINK: club name and season (formatted as YYYY)</li>
             <li className='list-none'>
-              Note: Data synced up to November 14, 2024. Excludes 2020 data as
-              that season was replaced by the Challenge Cup.
+              Notes: Player must have at least one cap to be listed under a
+              club's season. Data synced up to November 14, 2024. Excludes 2020
+              data as that season was replaced by the Challenge Cup.
             </li>
           </ul>
         </div>
@@ -117,7 +115,7 @@ export default function InfoModal({ closeInfoModal }) {
         >
           Tori
         </a>
-        , a software engineer who likes soccer, data, and design.
+        .
       </div>
     </Modal>
   )
