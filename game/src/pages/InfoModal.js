@@ -13,6 +13,7 @@ export default function InfoModal({ closeInfoModal }) {
       ))}
     </div>
   ))
+  SpacedExample.displayName = 'SpacedExample'
 
   const Example = ({
     guess,
@@ -37,7 +38,7 @@ export default function InfoModal({ closeInfoModal }) {
           </div>
           <div className='flex flex-col items-start'>
             <span>Letters in answer but wrong spot</span>
-            <span>Your guess adjusted to answer's spacing</span>
+            <span>Your guess adjusted to answer&#39;s spacing</span>
             <span>Letters in the correct spot</span>
           </div>
         </div>
@@ -56,7 +57,7 @@ export default function InfoModal({ closeInfoModal }) {
         <h3 className='text-xl font-bold'>HOW TO PLAY</h3>
         <div className='space-y-4'>
           <p>
-            Guess National Women's Soccer League (NWSL) players and clubs to
+            Guess National Women&#39;s Soccer League (NWSL) players and clubs to
             complete the board.
           </p>
           <ul className='list-disc pl-4 space-y-2'>
@@ -81,8 +82,8 @@ export default function InfoModal({ closeInfoModal }) {
             <li>LINK: club name and season (formatted as YYYY)</li>
             <li className='list-none'>
               Notes: Player must have at least one cap to be listed under a
-              club's season. Data synced up to November 14, 2024. Excludes 2020
-              data as that season was replaced by the Challenge Cup.
+              club&#39;s season. Data synced up to November 14, 2024. Excludes
+              2020 data as that season was replaced by the Challenge Cup.
             </li>
           </ul>
         </div>
