@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import Game from './Game'
+import Game from '../utils/Game'
 import Grid from './Grid'
 import Guess from './Guess'
 import RowInput from './RowInput'
