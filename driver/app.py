@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
-from driver import nwsl_driver
+import nwsl_driver
 import logging
 import os
 
