@@ -393,7 +393,7 @@ export default function GameRunner({ updateStats, openStatsModal }) {
         <div className='flex flex-col w-full text-center pt-8 space-y-8'>
           <p>Warming Up... Connecting passes... Stretching...</p>
           <span className='flex w-full justify-center'>
-            <Spinner />
+            <Spinner className='animate-spin' />
           </span>
         </div>
       )}
