@@ -4,6 +4,7 @@ import Grid from './Grid'
 import Guess from '../utils/Guess'
 import RowInput from './RowInput'
 import GuessInput from './GuessInput'
+import Spinner from '../utils/Spinner'
 import {
   checkAPIConnection,
   isValidPlayer,
@@ -389,8 +390,11 @@ export default function GameRunner({ updateStats, openStatsModal }) {
           </div>
         </div>
       ) : (
-        <div className='w-full text-center pt-4'>
-          <p>Building Game... Creating Links... Warming Up...</p>
+        <div className='flex flex-col w-full text-center pt-8 space-y-8'>
+          <p>Warming Up... Connecting passes... Stretching...</p>
+          <span className='flex w-full justify-center'>
+            <Spinner />
+          </span>
         </div>
       )}
     </div>

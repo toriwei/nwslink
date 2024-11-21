@@ -116,6 +116,14 @@ export default function InfoModal({ closeInfoModal }) {
         >
           Tori
         </a>
+        , a recent CS grad and soccer enthusiast. Check out the code{' '}
+        <a
+          className='text-nwslRed hover:text-nwslDeepRed'
+          href='https://github.com/toriwei/nwslink'
+          target='_blank'
+        >
+          here
+        </a>
         .
       </div>
     </Modal>

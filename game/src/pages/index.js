@@ -4,6 +4,7 @@ import StatsModal from './StatsModal'
 import InfoModal from './InfoModal'
 import GameRunner from './GameRunner'
 import { IBM_Plex_Mono } from 'next/font/google'
+import Head from 'next/head'
 
 const ibm_Plex_Mono = IBM_Plex_Mono({
   weight: '400',
@@ -88,6 +89,9 @@ export default function Home() {
     <div
       className={`${ibm_Plex_Mono.className} w-screen h-screen px-8 lg:px-12 pt-8 text-xs md:text-sm lg:text-base`}
     >
+      <Head>
+        <title>NWSLink</title>
+      </Head>
       <Header openStatsModal={openStatsModal} openInfoModal={openInfoModal} />
       {showStatsModal && (
         <StatsModal
