@@ -4,7 +4,7 @@ const url = process.env.NEXT_PUBLIC_BACKEND_URL
 export const checkAPIConnection = async () => {
   // TODO: attempted /ping but would still return true when server down
   try {
-    await axios.get(`${process.env.BACKEND_URL}/random_player`)
+    await axios.get(`${url}/random_player`)
     return true
   } catch (error) {
     console.error('API connection failed', error)
