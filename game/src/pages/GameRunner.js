@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import Game from '../utils/Game'
 import Grid from './Grid'
-import Guess from './Guess'
+import Guess from '../utils/Guess'
 import RowInput from './RowInput'
 import GuessInput from './GuessInput'
 import {

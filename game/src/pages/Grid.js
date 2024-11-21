@@ -1,4 +1,12 @@
 export default function Grid({ players, connections }) {
+  if (
+    !players ||
+    players.length === 0 ||
+    !connections ||
+    connections.length === 0
+  ) {
+    return <div>Loading...</div>
+  }
   return (
     <div className='py-4 overflow-x-auto max-w-screen'>
       <table className='mx-auto w-full border-separate border-spacing-x-1 border-spacing-y-2'>

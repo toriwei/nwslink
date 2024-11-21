@@ -1,5 +1,5 @@
 import assert from 'assert'
-import Guess from '../src/pages/Guess.js'
+import Guess from '../src/utils/Guess.js'
 describe('helper functions in handleGuess - players', function () {
   describe('align guess', function () {
     it('should save leftover letters for long guesses', function () {

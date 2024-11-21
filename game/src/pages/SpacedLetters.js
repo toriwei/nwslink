@@ -1,4 +1,7 @@
 export default function SpacedLetters({ parts }) {
+  if (!parts || parts.length === 0) {
+    return <div>Loading...</div>
+  }
   return (
     <div className='space-x-4 sm:space-x-6 lg:space-x-8'>
       {parts.map((part, i) => (

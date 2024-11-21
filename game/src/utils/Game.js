@@ -12,7 +12,7 @@ import {
   getRandomTeammate,
 } from '../../api/gameAPI'
 
-const TESTING = true
+const TESTING = false
 
 class Game {
   constructor(IS_RANDOM_GAME, existingGame = undefined) {

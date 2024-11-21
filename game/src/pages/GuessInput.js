@@ -12,6 +12,9 @@ export default function GuessInput({
   gameComplete,
   guessLog,
 }) {
+  if (!guess || guess === undefined) {
+    return <div>Loading...</div>
+  }
   const getFormattedSharedLetters = () => {
     const letters = isPlayerGuess
       ? gameProgress.mysteryPlayersSharedLetters[row]
