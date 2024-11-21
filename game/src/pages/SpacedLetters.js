@@ -1,6 +1,6 @@
 export default function SpacedLetters({ parts }) {
-  if (!parts || parts.length === 0) {
-    return <div>Loading...</div>
+  if (parts === undefined) {
+    return
   }
   return (
     <div className='space-x-4 sm:space-x-6 lg:space-x-8'>

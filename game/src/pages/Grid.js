@@ -5,7 +5,7 @@ export default function Grid({ players, connections }) {
     !connections ||
     connections.length === 0
   ) {
-    return <div>Loading...</div>
+    return
   }
   return (
     <div className='py-4 overflow-x-auto max-w-screen'>

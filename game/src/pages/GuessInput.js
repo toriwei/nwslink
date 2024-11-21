@@ -12,8 +12,8 @@ export default function GuessInput({
   gameComplete,
   guessLog,
 }) {
-  if (!guess || guess === undefined) {
-    return <div>Loading...</div>
+  if (guess === undefined) {
+    return
   }
   const getFormattedSharedLetters = () => {
     const letters = isPlayerGuess

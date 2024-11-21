@@ -6,8 +6,8 @@ export default function StatsModal({
   showGameCompleteMessage,
   resetGame,
 }) {
-  if (!stats || stats === undefined) {
-    return <div>Loading...</div>
+  if (stats === undefined) {
+    return
   }
   return (
     <Modal

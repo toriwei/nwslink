@@ -20,7 +20,6 @@ class Game {
     this.existingGame = existingGame
 
     if (this.existingGame) {
-      console.log('GAME LOADING')
       this.players = this.existingGame.players
       this.connections = this.existingGame.connections
       this.mysteryConnection = this.existingGame.mysteryConnection

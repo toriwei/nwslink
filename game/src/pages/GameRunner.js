@@ -156,7 +156,7 @@ export default function GameRunner({ updateStats, openStatsModal }) {
     }))
 
     setGuess(getFormattedGuess(result))
-    console.log(guessLog)
+    // console.log(guessLog)
 
     if (isPlayerGuess) {
       increasePlayerGuessCount()
@@ -164,7 +164,7 @@ export default function GameRunner({ updateStats, openStatsModal }) {
       increaseLinkGuessCount()
     }
 
-    console.log('INCR GUESS')
+    // console.log('INCR GUESS')
 
     setGuessCount((prev) => {
       const newCount = parseInt(prev) + 1
@@ -179,7 +179,7 @@ export default function GameRunner({ updateStats, openStatsModal }) {
         localStorage.setItem('currentGame', JSON.stringify(updatedProgress))
         return updatedProgress
       })
-      console.log(newCount)
+      // console.log(newCount)
       return newCount
     })
 
@@ -234,7 +234,6 @@ export default function GameRunner({ updateStats, openStatsModal }) {
     }
 
     setGuessLog((prev) => {
-      console.log('meep')
       const newGuessLog = prev.map((arr, index) =>
         index === gridRow - 1 ? [guessBuild, ...arr] : arr
       )
@@ -255,9 +254,7 @@ export default function GameRunner({ updateStats, openStatsModal }) {
     async function initializeGame() {
       setSetupError(null)
       let game = undefined
-      console.log(savedGame)
       if (savedGame) {
-        console.log('importing saved game')
         game = new Game(IS_RANDOM_GAME, savedGame)
         setGameProgress(savedGame)
         setGuessCount(savedGame.guessCount)
@@ -274,7 +271,6 @@ export default function GameRunner({ updateStats, openStatsModal }) {
           return
         }
       } else {
-        console.log('game from scratch')
         game = new Game(IS_RANDOM_GAME)
         const isConnected = await checkAPIConnection()
         if (!isConnected) {
@@ -318,7 +314,6 @@ export default function GameRunner({ updateStats, openStatsModal }) {
 
         localStorage.setItem('currentGame', JSON.stringify(currentGameProgress))
       }
-      console.log(JSON.parse(localStorage.getItem('currentGame')))
     }
 
     if (!hasRun.current) {
