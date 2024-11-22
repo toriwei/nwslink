@@ -34,7 +34,7 @@ RETURN p, f, t, m, a
 ORDER BY t, m
 ```
 
-![find teammates](./example-images/find-teammates.png)
+![find teammates](../example-images/find-teammates.png)
 
 ### Amount of Teammates by Club
 
@@ -46,7 +46,7 @@ RETURN w.team AS team, COUNT(w.team) AS num_teammates
 ORDER BY w.team
 ```
 
-![kristie mewis teammates per club](./example-images/kristie-mewis-teammates.png)
+![kristie mewis teammates per club](../example-images/kristie-mewis-teammates.png)
 
 ### Total Amount of Teammates
 
@@ -58,7 +58,7 @@ WITH player, COUNT(DISTINCT teammate) AS num_teammates
 RETURN num_teammates
 ```
 
-![amount teammates](./example-images/amount-teammates.png)
+![amount teammates](../example-images/amount-teammates.png)
 
 ### Shortest Connection
 
@@ -73,7 +73,7 @@ MATCH p = shortestPath((a)-[*]-(b))
 RETURN p
 ```
 
-![shorest connection](./example-images/shortest-connection.png)
+![shorest connection](../example-images/shortest-connection.png)
 
 Show the shortest path between Sam Kerr and Jessica McDonald
 
@@ -84,7 +84,7 @@ MATCH p = shortestPath((a)-[*]-(b))
 RETURN p
 ```
 
-![shorest connection2](./example-images/shortest-connection-2.png)
+![shorest connection2](../example-images/shortest-connection-2.png)
 
 ### Players by Season and Club
 
@@ -95,7 +95,7 @@ MATCH (p:Player)-[f:PLAYED_FOR WHERE f.seasons CONTAINS '2023' AND f.seasons CON
 RETURN p, f, t
 ```
 
-![players by season and club](./example-images/players-by-season.png)
+![players by season and club](../example-images/players-by-season.png)
 
 ## Club Queries
 
@@ -105,11 +105,11 @@ Show where players from the Boston Breakers's 2017 season played in 2018.
 
 - Boston Breakers disbanded following the 2017 season, and the NWSL held a dispersal draft prior to the 2018 season.
 
-![dispersal](./example-images/dispersal.png)
+![dispersal](../example-images/dispersal.png)
 
 Show where players from the Houston Dash's 2017 roster played in 2018.
 
-![dispersal 2](./example-images/dispersal-2.png)
+![dispersal 2](../example-images/dispersal-2.png)
 
 ### Players per Season
 
@@ -125,7 +125,7 @@ RETURN individual_season AS season, COUNT(individual_season) AS player_count
 ORDER BY season DESC
 ```
 
-![players per season](./example-images/players-per-season.png)
+![players per season](../example-images/players-per-season.png)
 
 ## League-Wide Stats
 
@@ -140,7 +140,7 @@ ORDER BY num_teammates DESC
 LIMIT 10
 ```
 
-![most teammates](./example-images/most-teammates.png)
+![most teammates](../example-images/most-teammates.png)
 
 ### League-Wide Players per Season
 
@@ -154,4 +154,4 @@ RETURN individual_season AS season, COUNT(individual_season) AS player_count
 ORDER BY season
 ```
 
-![league players by season](./example-images/league-players-per-season.png)
+![league players by season](../example-images/league-players-per-season.png)

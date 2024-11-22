@@ -1,8 +1,8 @@
 # NWSLink
 
-Welcome to NWSLink, a project that explores the club and teammate histories of players in the National Women's Soccer League (NWSLink). It's also a guessing game! Play it at: https://nwslink.vercel.app/
+Welcome to NWSLink, a database project that explores the club and teammate histories of players in the National Women's Soccer League (NWSL). It's also a guessing game! Play it at https://nwslink.vercel.app/
 
-This README is a general overview of this project's components.
+This README is a general overview of the project's components.
 
 Further Documentation:
 
@@ -15,11 +15,13 @@ Further Documentation:
 - **Backend**
   - Database: Neo4j, Cypher
   - Processing: pandas, python
-  - API: Flask (hosted on Render)
-  - Hosting: Neo4j AuraDB
+  - API: Flask
+  - Testing: pytest
+  - Hosting: Neo4j AuraDB, Render
 - **Frontend**
   - Framework: Next.js, JavaScript
   - Styling: Tailwind CSS
+  - Testing: mocha
   - Hosting: Vercel
 
 ## Database
@@ -42,7 +44,7 @@ The [driver](./driver/) folder contains the data access layer to run queries fro
 
 ## Game
 
-The guessing game challenges users to identify players and their playing histories with teammates and clubs.
+The guessing game challenges users to identify players and their history with teammates and clubs.
 
 ### Terminal
 
