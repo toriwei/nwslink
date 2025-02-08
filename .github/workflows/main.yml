@@ -1,0 +1,10 @@
+name: Ping Backend
+on:
+  schedule:
+    - cron: '0 0 * * *'
+jobs:
+  ping-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: ping-backend
+      - run: curl -X GET "https://nwslink.onrender.com"
