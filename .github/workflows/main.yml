@@ -7,4 +7,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: ping-backend
-      - run: curl -X GET "https://nwslink.onrender.com"
+        run: curl -X GET "https://nwslink.onrender.com"
