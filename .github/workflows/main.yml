@@ -2,6 +2,7 @@ name: Ping Backend
 on:
   schedule:
     - cron: '0 0 * * *'
+  workflow_dispatch:
 jobs:
   ping-backend:
     runs-on: ubuntu-latest
