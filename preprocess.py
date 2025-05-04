@@ -5,7 +5,7 @@ import numpy as np # type: ignore
 
 # note: 2020 was Challenge Cup (COVID protocol). No data listed for that season
 # however, 2021 season games were listed as being under 2020 season
-season_range = np.arange(13, 25)
+season_range = np.arange(13, 26)
 season_range = season_range[season_range != 21]
 
 nwsl = sd.FBref('USA-National Women\'s Soccer League', season_range, no_cache=True)

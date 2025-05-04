@@ -5,8 +5,6 @@ class Guess {
     this.sharedLetters = sharedLetters
     this.guess = guess
     this.isPlayerGuess = isPlayerGuess
-    // console.log('ANSWER:', answer)
-    // console.log('GUESS:', guess)
   }
 
   handleGuess() {

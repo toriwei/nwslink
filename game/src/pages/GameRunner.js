@@ -157,15 +157,12 @@ export default function GameRunner({ updateStats, openStatsModal }) {
     }))
 
     setGuess(getFormattedGuess(result))
-    // console.log(guessLog)
 
     if (isPlayerGuess) {
       increasePlayerGuessCount()
     } else {
       increaseLinkGuessCount()
     }
-
-    // console.log('INCR GUESS')
 
     setGuessCount((prev) => {
       const newCount = parseInt(prev) + 1
@@ -180,7 +177,6 @@ export default function GameRunner({ updateStats, openStatsModal }) {
         localStorage.setItem('currentGame', JSON.stringify(updatedProgress))
         return updatedProgress
       })
-      // console.log(newCount)
       return newCount
     })
 
@@ -202,8 +198,8 @@ export default function GameRunner({ updateStats, openStatsModal }) {
     }
 
     const season = parseInt(lastFourDigits, 10)
-    if (season < 2013 || season > 2024 || season === 2020) {
-      setInputError('Season must be between 2013 and 2024, excluding 2020')
+    if (season < 2013 || season > 2025 || season === 2020) {
+      setInputError('Season must be between 2013 and 2025, excluding 2020')
       return false
     }
     return true
